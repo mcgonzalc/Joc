@@ -14,7 +14,7 @@ using System.Diagnostics.Eventing.Reader;
 
 namespace Cliente
 {
-    public partial class PantallaLogeo : Form
+    public partial class PantallaSesionUsuario : Form
     {
 
         Socket server;
@@ -22,12 +22,13 @@ namespace Cliente
         delegate void DelegadoParaPonerTexto(string texto);
 
         List<SalaDeEspera> formularios = new List<SalaDeEspera>();
-        public PantallaLogeo()
+        public PantallaSesionUsuario()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
         }
 
-        private void AtenderServidor()
+        public void AtenderServidor()
         {
             while (true)
             {
@@ -50,6 +51,13 @@ namespace Cliente
                         if (respuestaservidor == "SI")
                         {
                             MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
+                            //Arrancamos el thread que atenderá los mensajes del servidor
+                            ThreadStart ts = delegate
+                            {
+                                AbrirSaladeEspera();
+                            };
+                            atender = new Thread(ts);
+                            atender.Start();
                         }
                         else if (respuestaservidor == "NO")
                         {
@@ -75,10 +83,31 @@ namespace Cliente
                             MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                         }
                         break;
+
+                    case 3:
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        formularios[0].ModificarResultado(respuestaservidor);
+                        break;
+
+                    case 4:
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        formularios[0].ModificarResultado(respuestaservidor);
+                        break;
+
+                    case 5:
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        formularios[0].ModificarResultado(respuestaservidor);
+                        break;
                 }
             }
         }
 
+        public void AbrirSaladeEspera()
+        {
+            SalaDeEspera SaladeEspera = new SalaDeEspera(server);
+            formularios.Add(SaladeEspera);
+            SaladeEspera.ShowDialog();
+        }
         private void OpcionInicioSesion_CheckedChanged(object sender, EventArgs e)
         {
             if (OpcionInicioSesion.Checked == true)
@@ -108,23 +137,30 @@ namespace Cliente
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                server.Connect(ipep); //Intentamos conectar el socket
-                this.BackColor = Color.Green;
-                MessageBox.Show("Conectado al servidor correctamente");
-                string mensaje = "2/" + Usuario.Text + '/' + Contrasena.Text;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-                //Arrancamos el thread que atenderá los mensajes del servidor
-                ThreadStart ts = delegate
+                if ((Contrasena.Text != "") && (Usuario.Text != ""))
                 {
-                    AtenderServidor();
-                };
-                atender = new Thread(ts);
-                atender.Start();
+                    server.Connect(ipep); //Intentamos conectar el socket
+                    this.BackColor = Color.Green;
+                    MessageBox.Show("Conectado al servidor correctamente");
+                    string mensaje = "2/" + Usuario.Text + '/' + Contrasena.Text;
+                    // Enviamos al servidor el nombre tecleado
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                    //Arrancamos el thread que atenderá los mensajes del servidor
+                    ThreadStart ts = delegate
+                    {
+                        AtenderServidor();
+                    };
+                    atender = new Thread(ts);
+                    atender.Start();
+                }
 
+                else
+                {
+                    MessageBox.Show("No has introducido todos los datos necesarios para loguearte o registrarte");
+                }
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
                 //Si hay excepcion imprimimos error y salimos del programa con return 
                 MessageBox.Show("No se ha podido conectar con el servidor");
@@ -144,28 +180,55 @@ namespace Cliente
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                server.Connect(ipep); //Intentamos conectar el socket
-                this.BackColor = Color.Green;
-                MessageBox.Show("Conectado al servidor correctamente");
-                string mensaje = "1/" + Usuario.Text + '/' + Contrasena.Text;
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-                //Arrancamos el thread que atenderá los mensajes del servidor
-                ThreadStart ts = delegate 
+                if ((Contrasena.Text != "") || (Usuario.Text != ""))
                 {
-                    AtenderServidor(); 
-                };
-                atender = new Thread(ts);
-                atender.Start();
-
+                    server.Connect(ipep); //Intentamos conectar el socket
+                    this.BackColor = Color.Green;
+                    MessageBox.Show("Conectado al servidor correctamente");
+                    string mensaje = "1/" + Usuario.Text + '/' + Contrasena.Text;
+                    // Enviamos al servidor el nombre tecleado
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                    //Arrancamos el thread que atenderá los mensajes del servidor
+                    ThreadStart ts = delegate
+                    {
+                        AtenderServidor();
+                    };
+                    atender = new Thread(ts);
+                    atender.Start();
+                }
+                else
+                {
+                    MessageBox.Show("No has introducido todos los datos necesarios para loguearte o registrarte");
+                }
+                
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
                 //Si hay excepcion imprimimos error y salimos del programa con return 
                 MessageBox.Show("No se ha podido conectar con el servidor");
                 return;
             }
+        }
+
+        private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            
+            if (this.BackColor == Color.Green)
+            {
+                //Mensaje de desconexión
+                string mensaje = "0/";
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                // Nos desconectamos
+                atender.Abort();
+                this.BackColor = Color.Gray;
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+            }
+
+            
         }
     }
 }

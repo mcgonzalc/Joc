@@ -16,7 +16,7 @@ namespace Cliente
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new PantallaLogeo());
+            Application.Run(new PantallaSesionUsuario());
         }
     }
 }

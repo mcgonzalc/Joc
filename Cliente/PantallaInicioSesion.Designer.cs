@@ -1,6 +1,6 @@
 ﻿namespace Cliente
 {
-    partial class PantallaLogeo
+    partial class PantallaSesionUsuario
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -53,6 +53,7 @@
             this.Contrasena.Name = "Contrasena";
             this.Contrasena.Size = new System.Drawing.Size(237, 30);
             this.Contrasena.TabIndex = 1;
+            this.Contrasena.UseSystemPasswordChar = true;
             // 
             // LabelUsuario
             // 
@@ -126,7 +127,7 @@
             this.OpcionCuentaNueva.UseVisualStyleBackColor = true;
             this.OpcionCuentaNueva.CheckedChanged += new System.EventHandler(this.OpcionCuentaNueva_CheckedChanged);
             // 
-            // PantallaLogeo
+            // PantallaSesionUsuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -139,8 +140,9 @@
             this.Controls.Add(this.LabelUsuario);
             this.Controls.Add(this.Contrasena);
             this.Controls.Add(this.Usuario);
-            this.Name = "PantallaLogeo";
+            this.Name = "PantallaSesionUsuario";
             this.Text = "Head Soccer - Inicio de sesión/Registro";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PantallaSesionUsuario_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

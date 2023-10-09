@@ -244,11 +244,167 @@ void *AtenderCliente (void *socket)
 				}
 			}	
 		}
-		if (CodigoConsulta !=0)
+		else if (CodigoConsulta == 3) //Piden calcular los puntos que ha obtenido un jugador en todas las partidas
+		{
+			int PuntosTotales = 0;
+			char Usuario[80];
+			p = strtok(NULL, "/");
+			strcpy (Usuario, p); // Ya tenemos el usuario
+			
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			
+			//Creamos el string para poder hacer la consulta a MySQL
+			//con una variable, que es el nombre del jugador buscado
+			char ConsultaResultante [80];
+			strcpy (ConsultaResultante,"SELECT Participacion.Puntos FROM Participacion,Jugador WHERE Jugador.Nombre = '");
+			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante,"' AND Jugador.Identificador = Participacion.Jugador");
+			
+			//Consulta SQL para obtener una tabla con
+			//los datos solicitados de la base de datos
+			ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+			if (ResultadoConsulta != 0) {
+				printf ("Error al consultar datos de la base %u %s\n",
+						mysql_errno(conn), mysql_error(conn));
+			}
+			
+			//Recogemos el resultado de la consulta en una
+			//tabla virtual MySQL
+			resultado = mysql_store_result (conn);
+			
+			//Recogemos el resultado de la primera fila
+			row = mysql_fetch_row (resultado);
+			
+			//Analizamos para empezar la primera fila para saber
+			//si hemos obtenido resultados con la consulta
+			if (row == NULL)
+				printf ("No se han obtenido datos en la consulta\n");
+			
+			//En caso de obtener resultados, se analiza cada fila hasta llegar
+			//a la primera fila con un valor nulo
+			else
+				while (row != NULL) {
+					
+					//Convertimos a int la columna 0, que es la que contiene
+					//los puntos de la partida analizada
+					
+					int PuntosPartida = atoi(row[0]);
+					
+					PuntosTotales = PuntosTotales + PuntosPartida;
+					
+					//Obtenemos la siguiente fila para el siguiente loop
+					row = mysql_fetch_row (resultado);
+			}
+				
+			sprintf(respuesta, "3/%d", PuntosTotales);
+		}
+		
+		if (CodigoConsulta == 4) //Consulta para el numero total de partidas ganadas por un jugador
+		{
+			int PartidasGanadas = 0;
+			char Usuario[80];
+			p = strtok(NULL, "/");
+			strcpy (Usuario, p); // Ya tenemos el usuario
+			
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			
+			//Creamos el string para poder hacer la consulta a MySQL
+			//con una variable, que es la lista de partidas ganadas por el jugador buscado
+			char ConsultaResultante [80];
+			strcpy (ConsultaResultante,"SELECT Partida.Identificador FROM Partida, Jugador WHERE Jugador.Nombre = '");
+			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante,"' AND Jugador.Identificador = Partida.Ganador");
+			
+			//Consulta SQL para obtener una tabla con
+			//los datos solicitados de la base de datos
+			ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+			if (ResultadoConsulta != 0) {
+				printf ("Error al consultar datos de la base %u %s\n",
+						mysql_errno(conn), mysql_error(conn));
+			}
+			
+			//Recogemos el resultado de la consulta en una
+			//tabla virtual MySQL
+			resultado = mysql_store_result (conn);
+			
+			//Recogemos el resultado de la primera fila
+			row = mysql_fetch_row (resultado);
+			
+			//Analizamos para empezar la primera fila para saber
+			//si hemos obtenido resultados con la consulta
+			if (row == NULL)
+				printf ("No se han obtenido datos en la consulta\n");
+			
+			//En caso de obtener resultados, se analiza cada fila hasta llegar
+			//a la primera fila con un valor nulo
+			else
+				while (row != NULL) {
+					
+					//Sumamos 1 partida ganada por cada fila analizada
+					PartidasGanadas++;
+					
+					//Obtenemos la siguiente fila para el siguiente loop
+					row = mysql_fetch_row (resultado);
+			}
+				
+				sprintf(respuesta, "4/%d", PartidasGanadas);
+		}
+		if (CodigoConsulta == 5) //Consulta para el numero total de partidas jugadas por un jugador
+		{
+			int PartidasJugadas = 0;
+			char Usuario[80];
+			p = strtok(NULL, "/");
+			strcpy (Usuario, p); // Ya tenemos el usuario
+			
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			
+			//Creamos el string para poder hacer la consulta a MySQL
+			//con una variable, que es la lista de partidas ganadas por el jugador buscado
+			char ConsultaResultante [80];
+			strcpy (ConsultaResultante,"SELECT Participacion.Partida FROM Participacion, Jugador WHERE Jugador.Nombre = '");
+			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante,"' AND Jugador.Identificador = Participacion.Jugador");
+			
+			//Consulta SQL para obtener una tabla con
+			//los datos solicitados de la base de datos
+			ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+			if (ResultadoConsulta != 0) {
+				printf ("Error al consultar datos de la base %u %s\n",
+						mysql_errno(conn), mysql_error(conn));
+			}
+			
+			//Recogemos el resultado de la consulta en una
+			//tabla virtual MySQL
+			resultado = mysql_store_result (conn);
+			
+			//Recogemos el resultado de la primera fila
+			row = mysql_fetch_row (resultado);
+			
+			//Analizamos para empezar la primera fila para saber
+			//si hemos obtenido resultados con la consulta
+			if (row == NULL)
+				printf ("No se han obtenido datos en la consulta\n");
+			
+			//En caso de obtener resultados, se analiza cada fila hasta llegar
+			//a la primera fila con un valor nulo
+			else
+				while (row != NULL) {
+					
+					//Sumamos 1 partida ganada por cada fila analizada
+					PartidasJugadas++;
+					
+					//Obtenemos la siguiente fila para el siguiente loop
+					row = mysql_fetch_row (resultado);
+			}
+				
+				sprintf(respuesta, "5/%d", PartidasJugadas);
+		}
+		
+		if (CodigoConsulta != 0)
 		{
 			printf ("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta
-			write (sock_conn,respuesta, strlen(respuesta));
+			write (sock_conn, respuesta, strlen(respuesta));
 		}
 		if ((CodigoConsulta ==1) || (CodigoConsulta==2) || (CodigoConsulta==3) || (CodigoConsulta==4) || (CodigoConsulta==5))
 		{
@@ -279,7 +435,7 @@ int main(int argc, char *argv[])
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		printf("Error creant socket");
+		printf("Error creando el socket\n");
 	// Fem el bind al port
 	
 	
@@ -290,12 +446,12 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9050);
+	serv_adr.sin_port = htons(9051);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
-		printf ("Error al bind");
+		printf ("Error al bind\n");
 	
 	if (listen(sock_listen, 3) < 0)
-		printf("Error en el Listen");
+		printf("Error en el Listen\n");
 	
 	contador =0;
 	
