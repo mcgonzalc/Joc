@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Cliente
 {
@@ -50,10 +51,28 @@ namespace Cliente
                         {
                             MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
                         }
-
                         else if (respuestaservidor == "NO")
                         {
                             MessageBox.Show("Combinación de usuario y contraseña incorrecta");
+                        }
+                        break;
+
+                    case 2:  //Queremos crearnos una nueva cuenta
+
+                        respuestaservidor = trozos[2].Split('\0')[0];
+                        if (respuestaservidor == "SI")
+                        {
+                            MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
+                        }
+
+                        else if (respuestaservidor == "NO")
+                        {
+                            MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
+                        }
+
+                        else if (respuestaservidor == "ERROR")
+                        {
+                            MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                         }
                         break;
                 }
@@ -66,7 +85,6 @@ namespace Cliente
             {
                 BotonInicioSesion.Enabled = true;
                 BotonRegistroCuenta.Enabled = false;
-                Contrasena.Enabled = true;
             }
         }
 
@@ -76,7 +94,6 @@ namespace Cliente
             {
                 BotonInicioSesion.Enabled = false;
                 BotonRegistroCuenta.Enabled = true;
-                Contrasena.Enabled = false;
             }
         }
 
@@ -87,18 +104,24 @@ namespace Cliente
             IPAddress direc = IPAddress.Parse("192.168.56.101");
             IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
-
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
                 server.Connect(ipep); //Intentamos conectar el socket
                 this.BackColor = Color.Green;
-                MessageBox.Show("Conectado");
-                //pongo en marcha el thread que atenderá los mensajes del servidor
-                //ThreadStart ts = delegate { AtenderServidor(); };
-                //atender = new Thread(ts);
-                //atender.Start();
+                MessageBox.Show("Conectado al servidor correctamente");
+                string mensaje = "2/" + Usuario.Text + '/' + Contrasena.Text;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+                //Arrancamos el thread que atenderá los mensajes del servidor
+                ThreadStart ts = delegate
+                {
+                    AtenderServidor();
+                };
+                atender = new Thread(ts);
+                atender.Start();
 
             }
             catch (SocketException ex)
@@ -115,7 +138,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

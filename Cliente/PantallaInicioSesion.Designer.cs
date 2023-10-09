@@ -48,7 +48,6 @@
             // 
             // Contrasena
             // 
-            this.Contrasena.Enabled = false;
             this.Contrasena.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Contrasena.Location = new System.Drawing.Point(253, 191);
             this.Contrasena.Name = "Contrasena";

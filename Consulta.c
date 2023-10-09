@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	}
 	
 	//Inicializamos la conexión al servidor MySQL
-	conn = mysql_real_connect (conn, "localhost","rot", "mysql", "Juego",0, NULL, 0);
+	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego",0, NULL, 0);
 	if (conn==NULL) {
 		printf ("Error al inicializar la conexion: %u %s\n", 
 				mysql_errno(conn), mysql_error(conn));
