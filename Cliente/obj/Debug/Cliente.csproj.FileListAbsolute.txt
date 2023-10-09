@@ -1,0 +1,11 @@
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\bin\Debug\Cliente.exe.config
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\bin\Debug\Cliente.exe
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\bin\Debug\Cliente.pdb
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.csproj.AssemblyReference.cache
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.PantallaLogeo.resources
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.Properties.Resources.resources
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.csproj.GenerateResource.cache
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.csproj.CoreCompileInputs.cache
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.exe
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.pdb
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.SalaDeEspera.resources
