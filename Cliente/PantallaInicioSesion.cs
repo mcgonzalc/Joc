@@ -46,57 +46,58 @@ namespace Cliente
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta
-
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        if (respuestaservidor == "SI")
-                        {
-                            MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
-                            //Arrancamos el thread que atenderá los mensajes del servidor
-                            ThreadStart ts = delegate
+                          respuestaservidor = trozos[2].Split('\0')[0];
+                          if (respuestaservidor == "SI")
                             {
-                                AbrirSaladeEspera();
-                            };
-                            atender = new Thread(ts);
-                            atender.Start();
-                        }
-                        else if (respuestaservidor == "NO")
-                        {
-                            MessageBox.Show("Combinación de usuario y contraseña incorrecta");
-                        }
+                                MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
+                                //Arrancamos el thread que atenderá los mensajes del servidor
+                                ThreadStart ts = delegate
+                                {
+                                    AbrirSaladeEspera();
+                                };
+                                atender = new Thread(ts);
+                                atender.Start();
+                            }
+                          else if (respuestaservidor == "NO")
+                            {
+                                MessageBox.Show("Combinación de usuario y contraseña incorrecta");
+                            }
                         break;
 
                     case 2:  //Queremos crearnos una nueva cuenta
-
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        if (respuestaservidor == "SI")
-                        {
-                            MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
-                        }
-
-                        else if (respuestaservidor == "NO")
-                        {
-                            MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
-                        }
-
-                        else if (respuestaservidor == "ERROR")
+                            respuestaservidor = trozos[2].Split('\0')[0];
+                            if (respuestaservidor == "SI")
+                            {
+                                MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
+                            }
+                            else if (respuestaservidor == "NO")
+                            {
+                                MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
+                            }
+                            else if (respuestaservidor == "ERROR")
                         {
                             MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                         }
                         break;
 
                     case 3:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 4:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 5:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                           respuestaservidor = trozos[1].Split('\0')[0];
+                           formularios[0].ModificarResultadoConsulta(respuestaservidor);
+                        break;
+
+                    case 6:
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ActualizarListaConectados(respuestaservidor);
                         break;
                 }
             }
@@ -213,7 +214,6 @@ namespace Cliente
 
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
             if (this.BackColor == Color.Green)
             {
                 //Mensaje de desconexión
@@ -226,9 +226,7 @@ namespace Cliente
                 this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
-            }
-
-            
+            } 
         }
     }
 }
