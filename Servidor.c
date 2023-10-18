@@ -36,7 +36,7 @@ int ResultadoConsulta;
 // Estructura especial para almacenar resultados de consultas 
 MYSQL_RES *resultado;
 MYSQL_ROW row;
-char ConsultaResultante [250];
+char ConsultaResultante[250];
 
 ListaConectados ListaUsuariosConectados;
 
@@ -137,6 +137,7 @@ int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nom
 		}
 		
 		ListaJugadoresConectados->NumJugadoresConectados--;
+		
 		return 0;
 	}
 	//Que hacer en caso de que no se encuentre al jugador a eliminar
@@ -157,6 +158,94 @@ void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, 
 		strcat(ListaResultante, ",");
 		strcat(ListaResultante, ListaJugadoresConectados->Conectados[i].Nombre);
 	}
+}
+
+void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char respuesta[512])
+{	
+	pthread_mutex_lock(&mutex);
+	memset(ConsultaResultante, 0, strlen(ConsultaResultante));
+	strcpy (ConsultaResultante,"SELECT Jugador.Nombre FROM Jugador WHERE Jugador.Nombre = '");
+	strcat (ConsultaResultante, Usuario);
+	strcat (ConsultaResultante,"'");
+			
+	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	if (ResultadoConsulta != 0)
+	{
+		printf ("Error al consultar datos de la base %u %s\n",
+		mysql_errno(conn), mysql_error(conn));
+	}
+	else if (ResultadoConsulta == 0)
+	{
+		//Recogemos el resultado de la consulta en una
+		//tabla virtual MySQL
+		resultado = mysql_store_result (conn);
+				
+		//Recogemos el resultado de la primera fila
+		row = mysql_fetch_row (resultado);
+				
+		//Si no encuentra ningún usuario con ese nombre
+		if (row == NULL)
+		{
+			//Abrimos otra vez MySQL para poder contar el número total de jugadores
+			memset(ConsultaResultante, 0, strlen(ConsultaResultante));
+			strcpy (ConsultaResultante,"SELECT Jugador.Identificador FROM Jugador");
+			int aperturamysqlconsulta2 = mysql_query (conn, ConsultaResultante);
+			if (aperturamysqlconsulta2 != 0)
+			{
+				printf ("Error al consultar datos de la base %u %s\n",
+				mysql_errno(conn), mysql_error(conn));
+				sprintf(respuesta, "2/%s/ERROR", Usuario);
+			}
+			else if (aperturamysqlconsulta2 == 0)
+			{
+				resultado = mysql_store_result (conn);
+				row = mysql_fetch_row (resultado);
+				int NumeroJugadoresInicial;
+				char NumeroJugadoresFinal[100];
+						
+				while(row != NULL)
+				{
+					NumeroJugadoresInicial = atoi(row[0]);
+							
+					//Obtenemos la siguiente fila para el siguiente loop
+					row = mysql_fetch_row (resultado);
+				}
+						
+				NumeroJugadoresInicial++;
+				sprintf(NumeroJugadoresFinal, "%d", NumeroJugadoresInicial);
+						
+				memset(ConsultaResultante, 0, strlen(ConsultaResultante));
+				strcpy (ConsultaResultante, "INSERT INTO Jugador VALUES(");
+				strcat (ConsultaResultante, NumeroJugadoresFinal);
+				strcat (ConsultaResultante, ", '");
+				strcat (ConsultaResultante, Usuario);
+				strcat (ConsultaResultante, "', '");
+				strcat (ConsultaResultante, Contrasena);
+				strcat (ConsultaResultante, "')");
+						
+				ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+				if (ResultadoConsulta == 0)
+				{
+					sprintf(respuesta, "2/%s/SI", Usuario);
+				}
+				else if (ResultadoConsulta != 0)
+				{
+					printf ("Error al introducir datos en la base %u %s\n",
+					mysql_errno(conn), mysql_error(conn));
+					sprintf(respuesta, "2/%s/ERROR", Usuario);
+				}
+						
+			}
+					
+		}
+				
+		//Si se encuentra un usuario con ese nombre
+		else if (row != NULL)
+		{
+			sprintf(respuesta, "2/%s/NO", Usuario);
+		}
+	}
+	pthread_mutex_unlock(&mutex);
 }
 
 void *AtenderCliente (void *socket)
@@ -217,6 +306,7 @@ void *AtenderCliente (void *socket)
 			p = strtok(NULL, "/");
 			strcpy (Usuario, p); // Ya tenemos el usuario
 			EliminarJugadorConectado(&ListaUsuariosConectados, Usuario);
+			mysql_close(conn);
 			terminar = 1;
 		}
 		else if (CodigoConsulta == 1) //Piden iniciar sesion con su cuenta
@@ -299,89 +389,7 @@ void *AtenderCliente (void *socket)
 			
 			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
 			
-			//Comprobamos que el usuario ya está registrado previamente
-			char ConsultaResultante [250];
-			strcpy (ConsultaResultante,"SELECT Jugador.Nombre FROM Jugador WHERE Jugador.Nombre = '");
-			strcat (ConsultaResultante, Usuario);
-			strcat (ConsultaResultante,"'");
-			
-			ResultadoConsulta = mysql_query (conn, ConsultaResultante);
-			if (ResultadoConsulta != 0)
-			{
-				printf ("Error al consultar datos de la base %u %s\n",
-						mysql_errno(conn), mysql_error(conn));
-			}
-			else if (ResultadoConsulta == 0)
-			{
-				//Recogemos el resultado de la consulta en una
-				//tabla virtual MySQL
-				resultado = mysql_store_result (conn);
-				
-				//Recogemos el resultado de la primera fila
-				row = mysql_fetch_row (resultado);
-				
-				//Si no encuentra ningún usuario con ese nombre
-				if (row == NULL)
-				{
-					//Abrimos otra vez MySQL para poder contar el número total de jugadores
-					memset(ConsultaResultante, 0, strlen(ConsultaResultante));
-					strcpy (ConsultaResultante,"SELECT Jugador.Identificador FROM Jugador");
-					int aperturamysqlconsulta2 = mysql_query (conn, ConsultaResultante);
-					if (aperturamysqlconsulta2 != 0)
-					{
-						printf ("Error al consultar datos de la base %u %s\n",
-								mysql_errno(conn), mysql_error(conn));
-						sprintf(respuesta, "2/%s/ERROR", Usuario);
-					}
-					else if (aperturamysqlconsulta2 == 0)
-					{
-						resultado = mysql_store_result (conn);
-						row = mysql_fetch_row (resultado);
-						int NumeroJugadoresInicial;
-						char NumeroJugadoresFinal[100];
-						
-						while(row != NULL)
-						{
-							NumeroJugadoresInicial = atoi(row[0]);
-							
-							//Obtenemos la siguiente fila para el siguiente loop
-							row = mysql_fetch_row (resultado);
-						}
-						
-						NumeroJugadoresInicial++;
-						sprintf(NumeroJugadoresFinal, "%d", NumeroJugadoresInicial);
-						
-						memset(ConsultaResultante, 0, strlen(ConsultaResultante));
-						strcpy (ConsultaResultante, "INSERT INTO Jugador VALUES(");
-						strcat (ConsultaResultante, NumeroJugadoresFinal);
-						strcat (ConsultaResultante, ", '");
-						strcat (ConsultaResultante, Usuario);
-						strcat (ConsultaResultante, "', '");
-						strcat (ConsultaResultante, Contrasena);
-						strcat (ConsultaResultante, "')");
-						
-						ResultadoConsulta = mysql_query (conn, ConsultaResultante);
-						if (ResultadoConsulta == 0)
-						{
-							sprintf(respuesta, "2/%s/SI", Usuario);
-						}
-						else if (ResultadoConsulta != 0)
-						{
-							printf ("Error al introducir datos en la base %u %s\n",
-									mysql_errno(conn), mysql_error(conn));
-							sprintf(respuesta, "2/%s/ERROR", Usuario);
-						}
-						
-					}
-					
-				}
-				
-				//Si se encuentra un usuario con ese nombre
-				else if (row != NULL)
-				{
-					sprintf(respuesta, "2/%s/NO", Usuario);
-				}
-			}	
+			RegistrarCuenta(conn, Usuario, Contrasena, respuesta);
 		}
 		else if (CodigoConsulta == 3) //Piden calcular los puntos que ha obtenido un jugador en todas las partidas
 		{
@@ -589,7 +597,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9050);
+	serv_adr.sin_port = htons(9051);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	
@@ -615,7 +623,5 @@ int main(int argc, char *argv[])
 		i=i+1;
 		
 	}
-	
-	
 	
 }

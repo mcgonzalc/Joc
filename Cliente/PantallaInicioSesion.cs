@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.Remoting.Channels;
 
 namespace Cliente
 {
@@ -18,7 +19,7 @@ namespace Cliente
     {
 
         Socket server;
-        Thread atender;
+        Thread threadlogueo, threadsalaespera;
         delegate void DelegadoParaPonerTexto(string texto);
 
         List<SalaDeEspera> formularios = new List<SalaDeEspera>();
@@ -55,8 +56,8 @@ namespace Cliente
                                 {
                                     AbrirSaladeEspera();
                                 };
-                                atender = new Thread(ts);
-                                atender.Start();
+                                threadsalaespera = new Thread(ts);
+                                threadsalaespera.Start();
                             }
                           else if (respuestaservidor == "NO")
                             {
@@ -132,7 +133,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 9051);
+            IPEndPoint ipep = new IPEndPoint(direc, 9050);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -152,8 +153,8 @@ namespace Cliente
                     {
                         AtenderServidor();
                     };
-                    atender = new Thread(ts);
-                    atender.Start();
+                    threadlogueo = new Thread(ts);
+                    threadlogueo.Start();
                 }
 
                 else
@@ -171,7 +172,6 @@ namespace Cliente
 
         private void BotonInicioSesion_Click(object sender, EventArgs e)
         {
-
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
@@ -195,14 +195,13 @@ namespace Cliente
                     {
                         AtenderServidor();
                     };
-                    atender = new Thread(ts);
-                    atender.Start();
+                    threadlogueo = new Thread(ts);
+                    threadlogueo.Start();
                 }
                 else
                 {
                     MessageBox.Show("No has introducido todos los datos necesarios para loguearte o registrarte");
-                }
-                
+                }         
             }
             catch (SocketException)
             {
@@ -217,12 +216,13 @@ namespace Cliente
             if (this.BackColor == Color.Green)
             {
                 //Mensaje de desconexión
-                string mensaje = "0/";
+                string mensaje = "0/" + Usuario.Text;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
                 // Nos desconectamos
-                atender.Abort();
+                threadlogueo.Abort();
+                threadsalaespera.Abort();
                 this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();

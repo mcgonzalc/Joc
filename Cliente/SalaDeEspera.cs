@@ -118,6 +118,7 @@ namespace Cliente
                 }
             }
         }
+        
         //Qué sucede cuando pulsamos el botón de actualizar la lista de usuarios conectados
         private void BotonActTablaConectados_Click(object sender, EventArgs e)
         {
