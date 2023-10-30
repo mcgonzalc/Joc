@@ -7,3 +7,5 @@
 ----------------
 - Versión 2 generada por Daniel
 - Versión 2 verificado por Marc
+- Versión 2 comunicado por Pedro
+- URL:  https://youtu.be/AK8xYhEBnU8 | https://youtu.be/o3ZpDaJsXHo
