@@ -6,3 +6,4 @@
 
 
 - Versión 2 generada por Daniel
+- Versión 2 verificado por Marc
