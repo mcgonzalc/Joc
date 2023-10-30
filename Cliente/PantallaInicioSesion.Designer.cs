@@ -41,19 +41,17 @@
             // Usuario
             // 
             this.Usuario.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Usuario.Location = new System.Drawing.Point(285, 102);
-            this.Usuario.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Usuario.Location = new System.Drawing.Point(253, 82);
             this.Usuario.Name = "Usuario";
-            this.Usuario.Size = new System.Drawing.Size(266, 35);
+            this.Usuario.Size = new System.Drawing.Size(237, 30);
             this.Usuario.TabIndex = 0;
             // 
             // Contrasena
             // 
             this.Contrasena.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Contrasena.Location = new System.Drawing.Point(285, 239);
-            this.Contrasena.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Contrasena.Location = new System.Drawing.Point(253, 191);
             this.Contrasena.Name = "Contrasena";
-            this.Contrasena.Size = new System.Drawing.Size(266, 35);
+            this.Contrasena.Size = new System.Drawing.Size(237, 30);
             this.Contrasena.TabIndex = 1;
             this.Contrasena.UseSystemPasswordChar = true;
             // 
@@ -62,11 +60,10 @@
             this.LabelUsuario.Cursor = System.Windows.Forms.Cursors.Default;
             this.LabelUsuario.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LabelUsuario.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.LabelUsuario.Location = new System.Drawing.Point(102, 102);
-            this.LabelUsuario.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.LabelUsuario.Location = new System.Drawing.Point(91, 82);
             this.LabelUsuario.Name = "LabelUsuario";
             this.LabelUsuario.ReadOnly = true;
-            this.LabelUsuario.Size = new System.Drawing.Size(101, 35);
+            this.LabelUsuario.Size = new System.Drawing.Size(90, 30);
             this.LabelUsuario.TabIndex = 2;
             this.LabelUsuario.Text = "Usuario:";
             // 
@@ -75,21 +72,19 @@
             this.LabelContrasena.Cursor = System.Windows.Forms.Cursors.Default;
             this.LabelContrasena.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LabelContrasena.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.LabelContrasena.Location = new System.Drawing.Point(102, 239);
-            this.LabelContrasena.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.LabelContrasena.Location = new System.Drawing.Point(91, 191);
             this.LabelContrasena.Name = "LabelContrasena";
             this.LabelContrasena.ReadOnly = true;
-            this.LabelContrasena.Size = new System.Drawing.Size(140, 35);
+            this.LabelContrasena.Size = new System.Drawing.Size(125, 30);
             this.LabelContrasena.TabIndex = 3;
             this.LabelContrasena.Text = "Contraseña:";
             // 
             // OpcionInicioSesion
             // 
             this.OpcionInicioSesion.AutoSize = true;
-            this.OpcionInicioSesion.Location = new System.Drawing.Point(115, 160);
-            this.OpcionInicioSesion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.OpcionInicioSesion.Location = new System.Drawing.Point(102, 128);
             this.OpcionInicioSesion.Name = "OpcionInicioSesion";
-            this.OpcionInicioSesion.Size = new System.Drawing.Size(258, 24);
+            this.OpcionInicioSesion.Size = new System.Drawing.Size(218, 20);
             this.OpcionInicioSesion.TabIndex = 4;
             this.OpcionInicioSesion.TabStop = true;
             this.OpcionInicioSesion.Text = "Tengo ya una cuenta registrada";
@@ -100,10 +95,9 @@
             // 
             this.BotonInicioSesion.Enabled = false;
             this.BotonInicioSesion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BotonInicioSesion.Location = new System.Drawing.Point(115, 326);
-            this.BotonInicioSesion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.BotonInicioSesion.Location = new System.Drawing.Point(102, 261);
             this.BotonInicioSesion.Name = "BotonInicioSesion";
-            this.BotonInicioSesion.Size = new System.Drawing.Size(201, 79);
+            this.BotonInicioSesion.Size = new System.Drawing.Size(179, 63);
             this.BotonInicioSesion.TabIndex = 5;
             this.BotonInicioSesion.Text = "Iniciar sesión";
             this.BotonInicioSesion.UseVisualStyleBackColor = true;
@@ -113,10 +107,9 @@
             // 
             this.BotonRegistroCuenta.Enabled = false;
             this.BotonRegistroCuenta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BotonRegistroCuenta.Location = new System.Drawing.Point(334, 326);
-            this.BotonRegistroCuenta.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.BotonRegistroCuenta.Location = new System.Drawing.Point(297, 261);
             this.BotonRegistroCuenta.Name = "BotonRegistroCuenta";
-            this.BotonRegistroCuenta.Size = new System.Drawing.Size(201, 79);
+            this.BotonRegistroCuenta.Size = new System.Drawing.Size(179, 63);
             this.BotonRegistroCuenta.TabIndex = 6;
             this.BotonRegistroCuenta.Text = "Registrar la cuenta";
             this.BotonRegistroCuenta.UseVisualStyleBackColor = true;
@@ -125,10 +118,9 @@
             // OpcionCuentaNueva
             // 
             this.OpcionCuentaNueva.AutoSize = true;
-            this.OpcionCuentaNueva.Location = new System.Drawing.Point(115, 194);
-            this.OpcionCuentaNueva.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.OpcionCuentaNueva.Location = new System.Drawing.Point(102, 155);
             this.OpcionCuentaNueva.Name = "OpcionCuentaNueva";
-            this.OpcionCuentaNueva.Size = new System.Drawing.Size(258, 24);
+            this.OpcionCuentaNueva.Size = new System.Drawing.Size(215, 20);
             this.OpcionCuentaNueva.TabIndex = 7;
             this.OpcionCuentaNueva.TabStop = true;
             this.OpcionCuentaNueva.Text = "No tengo una cuenta registrada";
@@ -137,9 +129,9 @@
             // 
             // PantallaSesionUsuario
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(628, 512);
+            this.ClientSize = new System.Drawing.Size(558, 410);
             this.Controls.Add(this.OpcionCuentaNueva);
             this.Controls.Add(this.BotonRegistroCuenta);
             this.Controls.Add(this.BotonInicioSesion);
@@ -148,11 +140,9 @@
             this.Controls.Add(this.LabelUsuario);
             this.Controls.Add(this.Contrasena);
             this.Controls.Add(this.Usuario);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "PantallaSesionUsuario";
             this.Text = "Head Soccer - Inicio de sesión/Registro";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PantallaSesionUsuario_FormClosing);
-            this.Load += new System.EventHandler(this.PantallaSesionUsuario_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

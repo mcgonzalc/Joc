@@ -72,7 +72,7 @@ namespace Cliente
             if (listacargada == true)
             {   
                 //Cambiamos el nombre de las filas que ya tenemos creadas con los usuarios nuevos
-                for (int i = 0; i < usuariosconectadosantes; i++)
+                for (int i = 0; i < (usuariosconectadosantes-1); i++)
                 {
                     TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i+1];
                 }
@@ -84,7 +84,8 @@ namespace Cliente
                 {
                     for (int i = usuariosconectadosahora; i < usuariosconectadosantes; i++)
                     {
-                        TablaUsuariosConectados.Rows.RemoveAt(i-1);
+                        TablaUsuariosConectados.Rows.RemoveAt(usuariosconectadosahora);
+                        TablaUsuariosConectados.Refresh();
                     }
 
                     TablaUsuariosConectados.Refresh();
@@ -128,16 +129,6 @@ namespace Cliente
             // Enviamos al servidor la consulta deseada
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-        }
-
-        private void SalaDeEspera_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void TablaUsuariosConectados_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
         public void AbrirJuego()
         {

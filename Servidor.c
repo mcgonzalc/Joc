@@ -130,7 +130,7 @@ int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nom
 	int PosicionJugadoraEliminar = BuscarPosicionJugador(ListaJugadoresConectados, NombreaBorrar);
 	
 	//Que hacer en caso de que se encuentre al jugador
-	if (PosicionJugadoraEliminar == 0)
+	if (PosicionJugadoraEliminar != -1)
 	{
 		for (int i = PosicionJugadoraEliminar; i < ListaJugadoresConectados->NumJugadoresConectados; i++)
 		{

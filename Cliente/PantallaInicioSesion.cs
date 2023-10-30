@@ -211,11 +211,6 @@ namespace Cliente
             }
         }
 
-        private void PantallaSesionUsuario_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (this.BackColor == Color.Green)
