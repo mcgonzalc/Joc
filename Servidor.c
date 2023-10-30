@@ -126,6 +126,7 @@ int BuscarPosicionJugador(ListaConectados *ListaJugadoresConectados, char Nombre
 
 int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char NombreaBorrar[80])
 {
+	pthread_mutex_lock(&mutex);
 	int PosicionJugadoraEliminar = BuscarPosicionJugador(ListaJugadoresConectados, NombreaBorrar);
 	
 	//Que hacer en caso de que se encuentre al jugador
@@ -145,10 +146,12 @@ int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nom
 	{
 		return -1;
 	}
+	pthread_mutex_unlock(&mutex);
 }
 
 void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, char ListaResultante[1000])
 {
+	pthread_mutex_lock(&mutex);
 	//Ponemos el numero de jugadores totales en el vector resultante
 	sprintf(ListaResultante, "%d", ListaJugadoresConectados->NumJugadoresConectados);
 	
@@ -158,6 +161,7 @@ void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, 
 		strcat(ListaResultante, ",");
 		strcat(ListaResultante, ListaJugadoresConectados->Conectados[i].Nombre);
 	}
+	pthread_mutex_unlock(&mutex);
 }
 
 void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char respuesta[512])

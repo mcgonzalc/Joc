@@ -9,3 +9,15 @@ D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cl
 D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.pdb
 D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.SalaDeEspera.resources
 D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.PantallaSesionUsuario.resources
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\bin\Debug\Cliente.exe.config
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\bin\Debug\Cliente.exe
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\bin\Debug\Cliente.pdb
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.csproj.AssemblyReference.cache
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.SalaDeEspera.resources
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.PantallaSesionUsuario.resources
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.Properties.Resources.resources
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.csproj.GenerateResource.cache
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.csproj.CoreCompileInputs.cache
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.exe
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.pdb
+C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.Juego.resources

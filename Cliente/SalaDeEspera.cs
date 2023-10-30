@@ -14,10 +14,12 @@ using System.Diagnostics.Eventing.Reader;
 
 namespace Cliente
 {
+  
     public partial class SalaDeEspera : Form
     {
         Socket server;
         bool listacargada = false;
+        List<Juego> formularios = new List<Juego>();
         public SalaDeEspera(Socket server)
         {
             InitializeComponent();
@@ -126,6 +128,26 @@ namespace Cliente
             // Enviamos al servidor la consulta deseada
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
+        }
+
+        private void SalaDeEspera_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TablaUsuariosConectados_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+        public void AbrirJuego()
+        {
+            Juego juego = new Juego();
+            formularios.Add(juego);
+            juego.ShowDialog();
+        }
+        private void Juego_Click(object sender, EventArgs e)
+        {
+            AbrirJuego();
         }
     }
 }

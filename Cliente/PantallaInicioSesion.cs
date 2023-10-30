@@ -132,8 +132,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
+            IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -174,7 +174,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
             IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
@@ -209,6 +209,11 @@ namespace Cliente
                 MessageBox.Show("No se ha podido conectar con el servidor");
                 return;
             }
+        }
+
+        private void PantallaSesionUsuario_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
