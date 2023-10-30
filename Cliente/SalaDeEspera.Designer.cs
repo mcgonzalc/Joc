@@ -35,6 +35,11 @@
             this.LabelResultado = new System.Windows.Forms.TextBox();
             this.Resultado = new System.Windows.Forms.TextBox();
             this.BotonConsulta = new System.Windows.Forms.Button();
+            this.TablaUsuariosConectados = new System.Windows.Forms.DataGridView();
+            this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BotonActTablaConectados = new System.Windows.Forms.Button();
+            this.Juego = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).BeginInit();
             this.SuspendLayout();
             // 
             // LabelUsuarioConsultado
@@ -110,11 +115,62 @@
             this.BotonConsulta.UseVisualStyleBackColor = true;
             this.BotonConsulta.Click += new System.EventHandler(this.BotonConsulta_Click);
             // 
+            // TablaUsuariosConectados
+            // 
+            this.TablaUsuariosConectados.AllowUserToAddRows = false;
+            this.TablaUsuariosConectados.AllowUserToDeleteRows = false;
+            this.TablaUsuariosConectados.AllowUserToOrderColumns = true;
+            this.TablaUsuariosConectados.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.TablaUsuariosConectados.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Nombre});
+            this.TablaUsuariosConectados.Location = new System.Drawing.Point(418, 31);
+            this.TablaUsuariosConectados.Name = "TablaUsuariosConectados";
+            this.TablaUsuariosConectados.ReadOnly = true;
+            this.TablaUsuariosConectados.RowHeadersWidth = 51;
+            this.TablaUsuariosConectados.RowTemplate.Height = 24;
+            this.TablaUsuariosConectados.RowTemplate.ReadOnly = true;
+            this.TablaUsuariosConectados.Size = new System.Drawing.Size(321, 191);
+            this.TablaUsuariosConectados.TabIndex = 8;
+            // 
+            // Nombre
+            // 
+            this.Nombre.HeaderText = "Nombre";
+            this.Nombre.MinimumWidth = 6;
+            this.Nombre.Name = "Nombre";
+            this.Nombre.ReadOnly = true;
+            this.Nombre.Width = 125;
+            // 
+            // BotonActTablaConectados
+            // 
+            this.BotonActTablaConectados.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BotonActTablaConectados.Location = new System.Drawing.Point(576, 241);
+            this.BotonActTablaConectados.Name = "BotonActTablaConectados";
+            this.BotonActTablaConectados.Size = new System.Drawing.Size(179, 52);
+            this.BotonActTablaConectados.TabIndex = 9;
+            this.BotonActTablaConectados.Text = "Actualizar";
+            this.BotonActTablaConectados.UseVisualStyleBackColor = true;
+            this.BotonActTablaConectados.Click += new System.EventHandler(this.BotonActTablaConectados_Click);
+            // 
+            // Juego
+            // 
+            this.Juego.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Juego.Location = new System.Drawing.Point(382, 241);
+            this.Juego.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Juego.Name = "Juego";
+            this.Juego.Size = new System.Drawing.Size(172, 52);
+            this.Juego.TabIndex = 10;
+            this.Juego.Text = "Empezar Juego";
+            this.Juego.UseVisualStyleBackColor = true;
+            this.Juego.Click += new System.EventHandler(this.Juego_Click);
+            // 
             // SalaDeEspera
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(364, 315);
+            this.ClientSize = new System.Drawing.Size(765, 315);
+            this.Controls.Add(this.Juego);
+            this.Controls.Add(this.BotonActTablaConectados);
+            this.Controls.Add(this.TablaUsuariosConectados);
             this.Controls.Add(this.BotonConsulta);
             this.Controls.Add(this.Resultado);
             this.Controls.Add(this.LabelResultado);
@@ -124,6 +180,7 @@
             this.Controls.Add(this.LabelUsuarioConsultado);
             this.Name = "SalaDeEspera";
             this.Text = "Sala de espera";
+            ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,5 +195,9 @@
         private System.Windows.Forms.TextBox LabelResultado;
         private System.Windows.Forms.Button BotonConsulta;
         public System.Windows.Forms.TextBox Resultado;
+        private System.Windows.Forms.Button BotonActTablaConectados;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
+        private System.Windows.Forms.DataGridView TablaUsuariosConectados;
+        private System.Windows.Forms.Button Juego;
     }
 }

@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.Remoting.Channels;
 
 namespace Cliente
 {
@@ -18,7 +19,7 @@ namespace Cliente
     {
 
         Socket server;
-        Thread atender;
+        Thread threadlogueo, threadsalaespera;
         delegate void DelegadoParaPonerTexto(string texto);
 
         List<SalaDeEspera> formularios = new List<SalaDeEspera>();
@@ -46,57 +47,58 @@ namespace Cliente
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta
-
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        if (respuestaservidor == "SI")
-                        {
-                            MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
-                            //Arrancamos el thread que atenderá los mensajes del servidor
-                            ThreadStart ts = delegate
+                          respuestaservidor = trozos[2].Split('\0')[0];
+                          if (respuestaservidor == "SI")
                             {
-                                AbrirSaladeEspera();
-                            };
-                            atender = new Thread(ts);
-                            atender.Start();
-                        }
-                        else if (respuestaservidor == "NO")
-                        {
-                            MessageBox.Show("Combinación de usuario y contraseña incorrecta");
-                        }
+                                MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
+                                //Arrancamos el thread que atenderá los mensajes del servidor
+                                ThreadStart ts = delegate
+                                {
+                                    AbrirSaladeEspera();
+                                };
+                                threadsalaespera = new Thread(ts);
+                                threadsalaespera.Start();
+                            }
+                          else if (respuestaservidor == "NO")
+                            {
+                                MessageBox.Show("Combinación de usuario y contraseña incorrecta");
+                            }
                         break;
 
                     case 2:  //Queremos crearnos una nueva cuenta
-
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        if (respuestaservidor == "SI")
-                        {
-                            MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
-                        }
-
-                        else if (respuestaservidor == "NO")
-                        {
-                            MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
-                        }
-
-                        else if (respuestaservidor == "ERROR")
+                            respuestaservidor = trozos[2].Split('\0')[0];
+                            if (respuestaservidor == "SI")
+                            {
+                                MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
+                            }
+                            else if (respuestaservidor == "NO")
+                            {
+                                MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
+                            }
+                            else if (respuestaservidor == "ERROR")
                         {
                             MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                         }
                         break;
 
                     case 3:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 4:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 5:
-                        respuestaservidor = trozos[1].Split('\0')[0];
-                        formularios[0].ModificarResultado(respuestaservidor);
+                           respuestaservidor = trozos[1].Split('\0')[0];
+                           formularios[0].ModificarResultadoConsulta(respuestaservidor);
+                        break;
+
+                    case 6:
+                          respuestaservidor = trozos[1].Split('\0')[0];
+                          formularios[0].ActualizarListaConectados(respuestaservidor);
                         break;
                 }
             }
@@ -130,7 +132,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
             IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
@@ -151,8 +153,8 @@ namespace Cliente
                     {
                         AtenderServidor();
                     };
-                    atender = new Thread(ts);
-                    atender.Start();
+                    threadlogueo = new Thread(ts);
+                    threadlogueo.Start();
                 }
 
                 else
@@ -170,10 +172,9 @@ namespace Cliente
 
         private void BotonInicioSesion_Click(object sender, EventArgs e)
         {
-
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
             IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
@@ -194,14 +195,13 @@ namespace Cliente
                     {
                         AtenderServidor();
                     };
-                    atender = new Thread(ts);
-                    atender.Start();
+                    threadlogueo = new Thread(ts);
+                    threadlogueo.Start();
                 }
                 else
                 {
                     MessageBox.Show("No has introducido todos los datos necesarios para loguearte o registrarte");
-                }
-                
+                }         
             }
             catch (SocketException)
             {
@@ -213,22 +213,20 @@ namespace Cliente
 
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
             if (this.BackColor == Color.Green)
             {
                 //Mensaje de desconexión
-                string mensaje = "0/";
+                string mensaje = "0/" + Usuario.Text;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
                 // Nos desconectamos
-                atender.Abort();
+                threadlogueo.Abort();
+                threadsalaespera.Abort();
                 this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
-            }
-
-            
+            } 
         }
     }
 }
