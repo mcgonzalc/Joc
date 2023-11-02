@@ -38,7 +38,7 @@
             this.TablaUsuariosConectados = new System.Windows.Forms.DataGridView();
             this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BotonActTablaConectados = new System.Windows.Forms.Button();
-            this.Juego = new System.Windows.Forms.Button();
+            this.BotonInicioPartida = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).BeginInit();
             this.SuspendLayout();
             // 
@@ -151,24 +151,24 @@
             this.BotonActTablaConectados.UseVisualStyleBackColor = true;
             this.BotonActTablaConectados.Click += new System.EventHandler(this.BotonActTablaConectados_Click);
             // 
-            // Juego
+            // BotonInicioPartida
             // 
-            this.Juego.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Juego.Location = new System.Drawing.Point(382, 241);
-            this.Juego.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.Juego.Name = "Juego";
-            this.Juego.Size = new System.Drawing.Size(172, 52);
-            this.Juego.TabIndex = 10;
-            this.Juego.Text = "Empezar Juego";
-            this.Juego.UseVisualStyleBackColor = true;
-            this.Juego.Click += new System.EventHandler(this.Juego_Click);
+            this.BotonInicioPartida.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BotonInicioPartida.Location = new System.Drawing.Point(398, 241);
+            this.BotonInicioPartida.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.BotonInicioPartida.Name = "BotonInicioPartida";
+            this.BotonInicioPartida.Size = new System.Drawing.Size(172, 52);
+            this.BotonInicioPartida.TabIndex = 10;
+            this.BotonInicioPartida.Text = "Empezar Juego";
+            this.BotonInicioPartida.UseVisualStyleBackColor = true;
+            this.BotonInicioPartida.Click += new System.EventHandler(this.BotonInicioPartida_Click);
             // 
             // SalaDeEspera
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 315);
-            this.Controls.Add(this.Juego);
+            this.Controls.Add(this.BotonInicioPartida);
             this.Controls.Add(this.BotonActTablaConectados);
             this.Controls.Add(this.TablaUsuariosConectados);
             this.Controls.Add(this.BotonConsulta);
@@ -198,6 +198,6 @@
         private System.Windows.Forms.Button BotonActTablaConectados;
         private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
         private System.Windows.Forms.DataGridView TablaUsuariosConectados;
-        private System.Windows.Forms.Button Juego;
+        private System.Windows.Forms.Button BotonInicioPartida;
     }
 }

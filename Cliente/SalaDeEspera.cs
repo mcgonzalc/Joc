@@ -136,7 +136,9 @@ namespace Cliente
             formularios.Add(juego);
             juego.ShowDialog();
         }
-        private void Juego_Click(object sender, EventArgs e)
+
+        //Qué sucede cuando pulsamos el botón de empezar una partida
+        private void BotonInicioPartida_Click(object sender, EventArgs e)
         {
             AbrirJuego();
         }
