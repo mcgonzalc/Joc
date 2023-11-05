@@ -30,33 +30,33 @@ namespace Cliente
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Juego));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.Jugador1 = new System.Windows.Forms.PictureBox();
+            this.Jugador2 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // Jugador1
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.pictureBox1.Location = new System.Drawing.Point(516, 217);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(104, 104);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.Jugador1.BackColor = System.Drawing.Color.Transparent;
+            this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
+            this.Jugador1.Location = new System.Drawing.Point(588, 236);
+            this.Jugador1.Name = "Jugador1";
+            this.Jugador1.Size = new System.Drawing.Size(76, 73);
+            this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.Jugador1.TabIndex = 0;
+            this.Jugador1.TabStop = false;
             // 
-            // pictureBox2
+            // Jugador2
             // 
-            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox2.Image = global::Cliente.Properties.Resources.jugador_2;
-            this.pictureBox2.Location = new System.Drawing.Point(143, 208);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(100, 101);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 1;
-            this.pictureBox2.TabStop = false;
+            this.Jugador2.BackColor = System.Drawing.Color.Transparent;
+            this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
+            this.Jugador2.Location = new System.Drawing.Point(27, 220);
+            this.Jugador2.Name = "Jugador2";
+            this.Jugador2.Size = new System.Drawing.Size(74, 89);
+            this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.Jugador2.TabIndex = 1;
+            this.Jugador2.TabStop = false;
             // 
             // Juego
             // 
@@ -64,22 +64,24 @@ namespace Cliente
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(738, 414);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.Jugador2);
+            this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Juego_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Juego_KeyPress);
+            ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox Jugador1;
+        private System.Windows.Forms.PictureBox Jugador2;
     }
 }
