@@ -21,7 +21,6 @@ namespace Cliente
         Socket server;
         Thread threadlogueo, threadsalaespera;
         delegate void DelegadoParaPonerTexto(string texto);
-        int ContadorVentanasSalaEspera;
 
         List<SalaDeEspera> ListaVentanasDeEspera = new List<SalaDeEspera>();
         public PantallaSesionUsuario()
@@ -42,7 +41,6 @@ namespace Cliente
                 string[] trozos = Encoding.ASCII.GetString(msg2).Split('/');
                 int codigo = 0;
                 string respuestaservidor;
-                int formularioreceptor;
 
                 //El primer trozo es el código de la operación realizada
                 codigo = Convert.ToInt32(trozos[0]);
@@ -94,36 +92,30 @@ namespace Cliente
                         break;
 
                     case 3:
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        formularioreceptor = Convert.ToInt32(trozos[1]);
-                        ListaVentanasDeEspera[formularioreceptor].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 4:
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        formularioreceptor = Convert.ToInt32(trozos[1]);
-                        ListaVentanasDeEspera[formularioreceptor].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 5:
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        formularioreceptor = Convert.ToInt32(trozos[1]);
-                        ListaVentanasDeEspera[formularioreceptor].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 6:
-                        respuestaservidor = trozos[2].Split('\0')[0];
-                        formularioreceptor = Convert.ToInt32(trozos[1]);
-                        ListaVentanasDeEspera[formularioreceptor].ActualizarListaConectados(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ActualizarListaConectados(respuestaservidor);
                         break;
                 }
             }
         }
         public void AbrirSaladeEspera()
         {
-            //Ajustamos el valor del formulario abierto nuevo por si nos es la primera sesión que hemos abierto
-            ContadorVentanasSalaEspera = ListaVentanasDeEspera.Count;
-            SalaDeEspera SaladeEspera = new SalaDeEspera(server, ContadorVentanasSalaEspera);
+            SalaDeEspera SaladeEspera = new SalaDeEspera(server);
             ListaVentanasDeEspera.Add(SaladeEspera);
             SaladeEspera.ShowDialog();
         }
@@ -192,7 +184,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPEndPoint ipep = new IPEndPoint(direc, 9051);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -254,9 +246,12 @@ namespace Cliente
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 Usuario.ReadOnly = false;
-                BotonInicioSesion.Enabled = true;
-                BotonInicioSesion.Enabled = true;
-                BotonRegistroCuenta.Enabled = true;
+                OpcionCuentaNueva.Enabled = true;
+                OpcionInicioSesion.Enabled = true;
+
+                //Reseteamos el contador de ventanas a 0
+                ListaVentanasDeEspera.Clear();
+                BotonCierreSesion.Enabled = false;
             }
         }
 
