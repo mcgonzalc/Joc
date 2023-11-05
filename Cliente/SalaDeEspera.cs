@@ -19,19 +19,21 @@ namespace Cliente
     {
         Socket server;
         bool listacargada = false;
+        int NumForm;
         List<Juego> formularios = new List<Juego>();
-        public SalaDeEspera(Socket server)
+        public SalaDeEspera(Socket server, int NumForm)
         {
             InitializeComponent();
-            this.server = server;
             CheckForIllegalCrossThreadCalls = false;
+            this.server = server;
+            this.NumForm = NumForm;
         }
 
         private void BotonConsulta_Click(object sender, EventArgs e)
         {
             if ((UsuarioaConsultar.Text != "") && (Consulta.SelectedIndex == 0)) //Queremos saber el número de partidas ganadas del jugador consultado
             {
-                string mensaje = "4/" + UsuarioaConsultar.Text;
+                string mensaje = "4/" + NumForm + "/" + UsuarioaConsultar.Text;
                 // Enviamos al servidor la consulta deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -39,7 +41,7 @@ namespace Cliente
 
             if ((UsuarioaConsultar.Text != "") && (Consulta.SelectedIndex == 1)) //Queremos saber los puntos totales del jugador consultado
             {
-                string mensaje = "3/" + UsuarioaConsultar.Text;
+                string mensaje = "3/" + NumForm + "/" + UsuarioaConsultar.Text;
                 // Enviamos al servidor la consulta deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -47,7 +49,7 @@ namespace Cliente
 
             if ((UsuarioaConsultar.Text != "") && (Consulta.SelectedIndex == 2)) //Queremos saber el número de partidas jugadas del jugador consultado
             {
-                string mensaje = "5/" + UsuarioaConsultar.Text;
+                string mensaje = "5/" + NumForm + "/" + UsuarioaConsultar.Text;
                 // Enviamos al servidor la consulta deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -75,9 +77,10 @@ namespace Cliente
                 for (int i = 0; i < (usuariosconectadosantes-1); i++)
                 {
                     TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i+1];
+                    TablaUsuariosConectados.Refresh();
                 }
 
-                TablaUsuariosConectados.Update();
+                TablaUsuariosConectados.Refresh();
 
                 //Borramos las filas que no usamos en caso de que ahora tengamos menos usuarios
                 if (usuariosconectadosahora < usuariosconectadosantes)
@@ -125,7 +128,7 @@ namespace Cliente
         //Qué sucede cuando pulsamos el botón de actualizar la lista de usuarios conectados
         private void BotonActTablaConectados_Click(object sender, EventArgs e)
         {
-            string mensaje = "6/";
+            string mensaje = "6/" + NumForm;
             // Enviamos al servidor la consulta deseada
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);

@@ -197,7 +197,7 @@
         public System.Windows.Forms.TextBox Resultado;
         private System.Windows.Forms.Button BotonActTablaConectados;
         private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
-        private System.Windows.Forms.DataGridView TablaUsuariosConectados;
         private System.Windows.Forms.Button Juego;
+        private System.Windows.Forms.DataGridView TablaUsuariosConectados;
     }
 }
