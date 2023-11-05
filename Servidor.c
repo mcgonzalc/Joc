@@ -127,6 +127,7 @@ int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nom
 
 void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, char ListaResultante[1000])
 {
+	pthread_mutex_lock(&mutex);
 	//Ponemos el numero de jugadores totales en el vector resultante
 	sprintf(ListaResultante, "%d", ListaJugadoresConectados->NumJugadoresConectados);
 	
@@ -136,6 +137,7 @@ void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, 
 		strcat(ListaResultante, ",");
 		strcat(ListaResultante, ListaJugadoresConectados->Conectados[i].Nombre);
 	}
+	pthread_mutex_unlock(&mutex);
 }
 
 void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Respuesta[512])
@@ -237,8 +239,6 @@ void IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socke
 	strcat (ConsultaResultante,"' AND Jugador.Contrasena = '");
 	strcat (ConsultaResultante, Contrasena);
 	strcat (ConsultaResultante,"'");
-	
-	
 	int ResultadoConsulta = mysql_query (conn, ConsultaResultante);
 	
 	//Si vemos que no nos sale ningun usuario, informamos
@@ -301,6 +301,7 @@ void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512]
 {
 	int PuntosTotales = 0;
 	
+	pthread_mutex_lock(&mutex);
 	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
 	if (ResultadoConsulta != 0)
 	{
@@ -322,25 +323,26 @@ void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512]
 	//En caso de obtener resultados, se analiza cada fila hasta llegar
 	//a la primera fila con un valor nulo
 	else
-		while (row != NULL)
+	while (row != NULL)
 	{
-			//Convertimos a int la columna 0, que es la que contiene
-			//los puntos de la partida analizada
+		//Convertimos a int la columna 0, que es la que contiene
+		//los puntos de la partida analizada
 			
-			int PuntosPartida = atoi(row[0]);
+		int PuntosPartida = atoi(row[0]);
 			
-			PuntosTotales = PuntosTotales + PuntosPartida;
+		PuntosTotales = PuntosTotales + PuntosPartida;
 			
-			//Obtenemos la siguiente fila para el siguiente loop
-			row = mysql_fetch_row (resultado);
+		//Obtenemos la siguiente fila para el siguiente loop
+		row = mysql_fetch_row (resultado);
 	}
-		
-		sprintf(Respuesta, "3/%d", PuntosTotales);
+	pthread_mutex_unlock(&mutex);
+	sprintf(Respuesta, "3/%d", PuntosTotales);
 }
 
 void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
 {
 	int PartidasGanadas = 0;
+	pthread_mutex_lock(&mutex);
 	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
 	if (ResultadoConsulta != 0)
 	{
@@ -364,16 +366,17 @@ void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 	//En caso de obtener resultados, se analiza cada fila hasta llegar
 	//a la primera fila con un valor nulo
 	else
-		while (row != NULL)
+	while (row != NULL)
 	{
-			//Sumamos 1 partida ganada por cada fila analizada
-			PartidasGanadas++;
+		//Sumamos 1 partida ganada por cada fila analizada
+		PartidasGanadas++;
 			
-			//Obtenemos la siguiente fila para el siguiente loop
-			row = mysql_fetch_row (resultado);
+		//Obtenemos la siguiente fila para el siguiente loop
+		row = mysql_fetch_row (resultado);
 	}
-		
-		sprintf(Respuesta, "4/%d", PartidasGanadas);
+	
+	pthread_mutex_unlock(&mutex);
+	sprintf(Respuesta, "4/%d", PartidasGanadas);
 }
 
 void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
@@ -634,7 +637,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9051);
+	serv_adr.sin_port = htons(9050);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	

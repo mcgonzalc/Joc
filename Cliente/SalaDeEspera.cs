@@ -122,15 +122,6 @@ namespace Cliente
                 }
             }
         }
-        
-        //Qué sucede cuando pulsamos el botón de actualizar la lista de usuarios conectados
-        private void BotonActTablaConectados_Click(object sender, EventArgs e)
-        {
-            string mensaje = "6/";
-            // Enviamos al servidor la consulta deseada
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-        }
         public void AbrirJuego()
         {
             Juego juego = new Juego();

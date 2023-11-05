@@ -117,6 +117,12 @@ namespace Cliente
         {
             SalaDeEspera SaladeEspera = new SalaDeEspera(server);
             ListaVentanasDeEspera.Add(SaladeEspera);
+
+            //Enviamos un mensaje al servidor para actualizar la lista de conectados para la nueva ventana
+            string mensaje = "6/";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+
             SaladeEspera.ShowDialog();
         }
         private void OpcionInicioSesion_CheckedChanged(object sender, EventArgs e)
@@ -183,7 +189,11 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
+<<<<<<< Updated upstream
             IPAddress direc = IPAddress.Parse("192.168.56.102");
+=======
+            IPAddress direc = IPAddress.Parse("192.168.56.101");
+>>>>>>> Stashed changes
             IPEndPoint ipep = new IPEndPoint(direc, 9050);
 
             //Creamos el socket 
@@ -257,7 +267,25 @@ namespace Cliente
 
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
-             
+            if (this.BackColor == Color.Green)
+            {
+                //Mensaje de desconexión
+                string mensaje = "0/" + Usuario.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                // Nos desconectamos cuando el servidor haya recibido la respuesta final del servidor
+                if (threadsalaespera.IsAlive == true)
+                {
+                    threadsalaespera.Abort();
+                }
+                if (threadlogueo.IsAlive == true)
+                {
+                    threadlogueo.Abort();
+                }
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+            }
         }
     }
 }
