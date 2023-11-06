@@ -147,8 +147,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPAddress direc = IPAddress.Parse("10.4.119.5");
+            IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -189,12 +189,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-<<<<<<< Updated upstream
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-=======
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
->>>>>>> Stashed changes
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPAddress direc = IPAddress.Parse("10.4.119.5"); //Dirección de Shiva
+            IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
