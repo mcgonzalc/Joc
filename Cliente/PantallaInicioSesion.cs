@@ -22,7 +22,7 @@ namespace Cliente
         Thread threadlogueo, threadsalaespera;
         delegate void DelegadoParaPonerTexto(string texto);
 
-        List<SalaDeEspera> formularios = new List<SalaDeEspera>();
+        List<SalaDeEspera> ListaVentanasDeEspera = new List<SalaDeEspera>();
         public PantallaSesionUsuario()
         {
             InitializeComponent();
@@ -34,16 +34,16 @@ namespace Cliente
             while (true)
             {
                 //Recibimos mensaje del servidor
-                byte[] msg2 = new byte[80];
+                byte[] msg2 = new byte[500];
                 server.Receive(msg2);
 
                 //Creamos un vector con cada trozo del mensaje recibido (cada cosa que va por cada / es un "trozo")
                 string[] trozos = Encoding.ASCII.GetString(msg2).Split('/');
-
-                //El primer trozo es el código de la operación realizada
-                int codigo = Convert.ToInt32(trozos[0]);
+                int codigo = 0;
                 string respuestaservidor;
 
+                //El primer trozo es el código de la operación realizada
+                codigo = Convert.ToInt32(trozos[0]);
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta
@@ -58,6 +58,9 @@ namespace Cliente
                                 };
                                 threadsalaespera = new Thread(ts);
                                 threadsalaespera.Start();
+                                Usuario.ReadOnly = true;
+                                BotonInicioSesion.Enabled = false;
+                                BotonRegistroCuenta.Enabled = false;
                             }
                           else if (respuestaservidor == "NO")
                             {
@@ -70,44 +73,50 @@ namespace Cliente
                             if (respuestaservidor == "SI")
                             {
                                 MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
+                                if (threadlogueo.IsAlive == true)
+                                {
+                                    threadlogueo.Abort();
+                                }
+                                this.BackColor = Color.Gray;
+                                server.Shutdown(SocketShutdown.Both);
+                                server.Close();
                             }
                             else if (respuestaservidor == "NO")
                             {
                                 MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
                             }
                             else if (respuestaservidor == "ERROR")
-                        {
+                            {
                             MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
-                        }
+                            }
                         break;
 
                     case 3:
-                          respuestaservidor = trozos[1].Split('\0')[0];
-                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 4:
-                          respuestaservidor = trozos[1].Split('\0')[0];
-                          formularios[0].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 5:
-                           respuestaservidor = trozos[1].Split('\0')[0];
-                           formularios[0].ModificarResultadoConsulta(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 6:
-                          respuestaservidor = trozos[1].Split('\0')[0];
-                          formularios[0].ActualizarListaConectados(respuestaservidor);
+                        respuestaservidor = trozos[1].Split('\0')[0];
+                        ListaVentanasDeEspera[0].ActualizarListaConectados(respuestaservidor);
                         break;
                 }
             }
         }
-
         public void AbrirSaladeEspera()
         {
             SalaDeEspera SaladeEspera = new SalaDeEspera(server);
-            formularios.Add(SaladeEspera);
+            ListaVentanasDeEspera.Add(SaladeEspera);
             SaladeEspera.ShowDialog();
         }
         private void OpcionInicioSesion_CheckedChanged(object sender, EventArgs e)
@@ -132,8 +141,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9051);
+            IPAddress direc = IPAddress.Parse("10.4.119.5");
+            IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -145,7 +154,7 @@ namespace Cliente
                     this.BackColor = Color.Green;
                     MessageBox.Show("Conectado al servidor correctamente");
                     string mensaje = "2/" + Usuario.Text + '/' + Contrasena.Text;
-                    // Enviamos al servidor el nombre tecleado
+                    //Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                     //Arrancamos el thread que atenderá los mensajes del servidor
@@ -174,8 +183,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9051);
+            IPAddress direc = IPAddress.Parse("10.4.119.5"); //Dirección de Shiva
+            IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -185,6 +194,10 @@ namespace Cliente
                 {
                     server.Connect(ipep); //Intentamos conectar el socket
                     this.BackColor = Color.Green;
+                    this.BotonCierreSesion.Enabled = true;
+                    this.BotonRegistroCuenta.Enabled = false;
+                    this.OpcionInicioSesion.Enabled = false;
+                    this.OpcionCuentaNueva.Enabled = false;
                     MessageBox.Show("Conectado al servidor correctamente");
                     string mensaje = "1/" + Usuario.Text + '/' + Contrasena.Text;
                     // Enviamos al servidor el nombre tecleado
@@ -211,6 +224,37 @@ namespace Cliente
             }
         }
 
+        private void BotonCierreSesion_Click(object sender, EventArgs e)
+        {
+            if (this.BackColor == Color.Green)
+            {
+                //Mensaje de desconexión
+                string mensaje = "0/" + Usuario.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                // Nos desconectamos cuando el servidor haya recibido la respuesta final del servidor
+                if (threadsalaespera.IsAlive == true)
+                {
+                    threadsalaespera.Abort();
+                }
+                if (threadlogueo.IsAlive == true)
+                {
+                    threadlogueo.Abort();
+                }
+                this.BackColor = Color.Gray;
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                Usuario.ReadOnly = false;
+                OpcionCuentaNueva.Enabled = true;
+                OpcionInicioSesion.Enabled = true;
+
+                //Reseteamos el contador de ventanas a 0
+                ListaVentanasDeEspera.Clear();
+                BotonCierreSesion.Enabled = false;
+            }
+        }
+
         private void PantallaSesionUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (this.BackColor == Color.Green)
@@ -220,13 +264,18 @@ namespace Cliente
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
-                // Nos desconectamos
-                threadlogueo.Abort();
-                threadsalaespera.Abort();
-                this.BackColor = Color.Gray;
+                // Nos desconectamos cuando el servidor haya recibido la respuesta final del servidor
+                if (threadsalaespera.IsAlive == true)
+                {
+                    threadsalaespera.Abort();
+                }
+                if (threadlogueo.IsAlive == true)
+                {
+                    threadlogueo.Abort();
+                }
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
-            } 
+            }
         }
     }
 }

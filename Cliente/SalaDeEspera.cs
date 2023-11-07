@@ -23,8 +23,8 @@ namespace Cliente
         public SalaDeEspera(Socket server)
         {
             InitializeComponent();
-            this.server = server;
             CheckForIllegalCrossThreadCalls = false;
+            this.server = server;
         }
 
         private void BotonConsulta_Click(object sender, EventArgs e)
@@ -75,9 +75,10 @@ namespace Cliente
                 for (int i = 0; i < (usuariosconectadosantes-1); i++)
                 {
                     TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i+1];
+                    TablaUsuariosConectados.Refresh();
                 }
 
-                TablaUsuariosConectados.Update();
+                TablaUsuariosConectados.Refresh();
 
                 //Borramos las filas que no usamos en caso de que ahora tengamos menos usuarios
                 if (usuariosconectadosahora < usuariosconectadosantes)
@@ -121,15 +122,6 @@ namespace Cliente
                 }
             }
         }
-        
-        //Qué sucede cuando pulsamos el botón de actualizar la lista de usuarios conectados
-        private void BotonActTablaConectados_Click(object sender, EventArgs e)
-        {
-            string mensaje = "6/";
-            // Enviamos al servidor la consulta deseada
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-        }
         public void AbrirJuego()
         {
             Juego juego = new Juego();
@@ -139,6 +131,14 @@ namespace Cliente
         private void Juego_Click(object sender, EventArgs e)
         {
             AbrirJuego();
+        }
+
+        private void SalaDeEspera_Load(object sender, EventArgs e)
+        {
+            //Enviamos un mensaje al servidor para actualizar la lista de conectados para la nueva ventana
+            string mensaje = "6/";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
         }
     }
 }
