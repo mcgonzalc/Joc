@@ -12,3 +12,4 @@
 
 ----------------
 - Versión 3 generada por Pedro
+- Versión 3 verificada por Daniel
