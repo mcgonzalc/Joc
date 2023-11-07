@@ -117,12 +117,6 @@ namespace Cliente
         {
             SalaDeEspera SaladeEspera = new SalaDeEspera(server);
             ListaVentanasDeEspera.Add(SaladeEspera);
-
-            //Enviamos un mensaje al servidor para actualizar la lista de conectados para la nueva ventana
-            string mensaje = "6/";
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-
             SaladeEspera.ShowDialog();
         }
         private void OpcionInicioSesion_CheckedChanged(object sender, EventArgs e)
@@ -148,7 +142,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("10.4.119.5");
-            IPEndPoint ipep = new IPEndPoint(direc, 50008);
+            IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -190,7 +184,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("10.4.119.5"); //Dirección de Shiva
-            IPEndPoint ipep = new IPEndPoint(direc, 50008);
+            IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

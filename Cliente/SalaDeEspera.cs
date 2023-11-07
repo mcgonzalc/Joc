@@ -132,5 +132,13 @@ namespace Cliente
         {
             AbrirJuego();
         }
+
+        private void SalaDeEspera_Load(object sender, EventArgs e)
+        {
+            //Enviamos un mensaje al servidor para actualizar la lista de conectados para la nueva ventana
+            string mensaje = "6/";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
     }
 }

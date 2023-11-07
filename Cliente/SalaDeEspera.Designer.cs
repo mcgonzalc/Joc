@@ -167,6 +167,7 @@
             this.Controls.Add(this.LabelUsuarioConsultado);
             this.Name = "SalaDeEspera";
             this.Text = "Sala de espera";
+            this.Load += new System.EventHandler(this.SalaDeEspera_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
