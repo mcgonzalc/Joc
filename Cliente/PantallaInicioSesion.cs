@@ -37,20 +37,21 @@ namespace Cliente
                 byte[] msg2 = new byte[500];
                 server.Receive(msg2);
 
+                string MensajeLimpio = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 //Creamos un vector con cada trozo del mensaje recibido (cada cosa que va por cada / es un "trozo")
-                string[] trozos = Encoding.ASCII.GetString(msg2).Split('/');
+                string[] TrozosRespuesta = MensajeLimpio.Split('/');
                 int codigo = 0;
                 string respuestaservidor;
 
                 //El primer trozo es el código de la operación realizada
-                codigo = Convert.ToInt32(trozos[0]);
+                codigo = Convert.ToInt32(TrozosRespuesta[0]);
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta
-                          respuestaservidor = trozos[2].Split('\0')[0];
+                          respuestaservidor = TrozosRespuesta[2];
                           if (respuestaservidor == "SI")
                             {
-                                MessageBox.Show("Sesión iniciada correctamente, saludos " + trozos[1]);
+                                MessageBox.Show("Sesión iniciada correctamente, saludos " + TrozosRespuesta[1]);
                                 //Arrancamos el thread que atenderá los mensajes del servidor
                                 ThreadStart ts = delegate
                                 {
@@ -69,10 +70,10 @@ namespace Cliente
                         break;
 
                     case 2:  //Queremos crearnos una nueva cuenta
-                            respuestaservidor = trozos[2].Split('\0')[0];
+                            respuestaservidor = TrozosRespuesta[2];
                             if (respuestaservidor == "SI")
                             {
-                                MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + trozos[1]);
+                                MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + TrozosRespuesta[1]);
                                 if (threadlogueo.IsAlive == true)
                                 {
                                     threadlogueo.Abort();
@@ -92,22 +93,22 @@ namespace Cliente
                         break;
 
                     case 3:
-                        respuestaservidor = trozos[1].Split('\0')[0];
+                        respuestaservidor = TrozosRespuesta[1];
                         ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 4:
-                        respuestaservidor = trozos[1].Split('\0')[0];
+                        respuestaservidor = TrozosRespuesta[1];
                         ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 5:
-                        respuestaservidor = trozos[1].Split('\0')[0];
+                        respuestaservidor = TrozosRespuesta[1];
                         ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
                         break;
 
                     case 6:
-                        respuestaservidor = trozos[1].Split('\0')[0];
+                        respuestaservidor = TrozosRespuesta[1];
                         ListaVentanasDeEspera[0].ActualizarListaConectados(respuestaservidor);
                         break;
                 }
