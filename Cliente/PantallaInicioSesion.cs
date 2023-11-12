@@ -41,15 +41,15 @@ namespace Cliente
                 //Creamos un vector con cada trozo del mensaje recibido (cada cosa que va por cada / es un "trozo")
                 string[] TrozosRespuesta = MensajeLimpio.Split('/');
                 int codigo = 0;
-                string respuestaservidor;
+                string RespuestaServidor;
 
                 //El primer trozo es el código de la operación realizada
                 codigo = Convert.ToInt32(TrozosRespuesta[0]);
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta
-                          respuestaservidor = TrozosRespuesta[2];
-                          if (respuestaservidor == "SI")
+                          RespuestaServidor = TrozosRespuesta[2];
+                          if (RespuestaServidor == "SI")
                             {
                                 MessageBox.Show("Sesión iniciada correctamente, saludos " + TrozosRespuesta[1]);
                                 //Arrancamos el thread que atenderá los mensajes del servidor
@@ -63,15 +63,15 @@ namespace Cliente
                                 BotonInicioSesion.Enabled = false;
                                 BotonRegistroCuenta.Enabled = false;
                             }
-                          else if (respuestaservidor == "NO")
+                          else if (RespuestaServidor == "NO")
                             {
                                 MessageBox.Show("Combinación de usuario y contraseña incorrecta");
                             }
                         break;
 
                     case 2:  //Queremos crearnos una nueva cuenta
-                            respuestaservidor = TrozosRespuesta[2];
-                            if (respuestaservidor == "SI")
+                            RespuestaServidor = TrozosRespuesta[2];
+                            if (RespuestaServidor == "SI")
                             {
                                 MessageBox.Show("Cuenta creada satisfactoriamente, saludos " + TrozosRespuesta[1]);
                                 if (threadlogueo.IsAlive == true)
@@ -82,41 +82,47 @@ namespace Cliente
                                 server.Shutdown(SocketShutdown.Both);
                                 server.Close();
                             }
-                            else if (respuestaservidor == "NO")
+                            else if (RespuestaServidor == "NO")
                             {
                                 MessageBox.Show("El nombre de usuario facilitado ya existe, prueba con otro que esté disponible");
                             }
-                            else if (respuestaservidor == "ERROR")
+                            else if (RespuestaServidor == "ERROR")
                             {
                             MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                             }
                         break;
 
                     case 3:
-                        respuestaservidor = TrozosRespuesta[1];
-                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
+                        RespuestaServidor = TrozosRespuesta[1];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(RespuestaServidor);
                         break;
 
                     case 4:
-                        respuestaservidor = TrozosRespuesta[1];
-                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
+                        RespuestaServidor = TrozosRespuesta[1];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(RespuestaServidor);
                         break;
 
                     case 5:
-                        respuestaservidor = TrozosRespuesta[1];
-                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(respuestaservidor);
+                        RespuestaServidor = TrozosRespuesta[1];
+                        ListaVentanasDeEspera[0].ModificarResultadoConsulta(RespuestaServidor);
                         break;
 
                     case 6:
-                        respuestaservidor = TrozosRespuesta[1];
-                        ListaVentanasDeEspera[0].ActualizarListaConectados(respuestaservidor);
+                        RespuestaServidor = TrozosRespuesta[1];
+                        ListaVentanasDeEspera[0].ActualizarListaConectados(RespuestaServidor);
+                        break;
+
+                    case 7:
+                        RespuestaServidor = TrozosRespuesta[1];
+                        string JugadorContrincante = TrozosRespuesta[2];
+                        ListaVentanasDeEspera[0].GestionesInicioPartida(RespuestaServidor, JugadorContrincante);
                         break;
                 }
             }
         }
         public void AbrirSaladeEspera()
         {
-            SalaDeEspera SaladeEspera = new SalaDeEspera(server);
+            SalaDeEspera SaladeEspera = new SalaDeEspera(server, Usuario.Text);
             ListaVentanasDeEspera.Add(SaladeEspera);
             SaladeEspera.ShowDialog();
         }
@@ -184,7 +190,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("10.4.119.5"); //Dirección de Shiva
+            IPAddress direc = IPAddress.Parse("192.168.56.101");
             IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
