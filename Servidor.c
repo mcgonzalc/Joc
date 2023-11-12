@@ -7,12 +7,12 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <mysql.h>
-#include <my_global.h> //Libreria especifica para produccion
+//#include <my_global.h> //Libreria especifica para produccion
 
 //Estructuras para los usuarios conectados
 typedef struct {
 	
-	char Nombre[20];
+	char Nombre[80];
 	int Socket;
 	
 }Conectado;
@@ -24,12 +24,22 @@ typedef struct {
 	
 }ListaConectados;
 
+typedef struct {
+	
+	Conectado Jugador1;
+	Conectado Jugador2;
+	int PuntosJugador1;
+	int PuntosJugador2;
+	
+}PartidasActivas;
+
 int ResultadoConsulta;
 // Estructura especial para almacenar resultados de consultas 
 MYSQL_RES *resultado;
 MYSQL_ROW row;
 char ConsultaResultante[1250];
 ListaConectados ListaUsuariosConectados;
+PartidasActivas ListaPartidasActivas;
 int sockets[100];
 int SocketsCreados;
 
@@ -59,7 +69,7 @@ int AnadirJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nombr
 int BuscarSocketJugador(ListaConectados *ListaJugadoresConectados, char NombreaBuscar[80])
 {
 	int JugadorEncontrado = 0;
-	int i;
+	int i = 0;
 	
 	//Se hace una busqueda mientras no nos pasemos del limite de la estructura o hasta que encontremos el jugador
 	while (JugadorEncontrado != 1 && ListaJugadoresConectados->NumJugadoresConectados > i)
@@ -417,6 +427,23 @@ void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 		
 		sprintf(Respuesta, "5/%d", PartidasJugadas);
 }
+
+void CrearPartida(PartidasActivas *ListaPartidasActivas, char Jugador1[80], char Jugador2[80])
+{
+	pthread_mutex_lock(&mutex);
+	int i;
+	
+	//Buscamos un hueco para poner una partida en nuestra tabla de partidas
+	while (strcmp(ListaPartidasActivas[i]->Conectado1, ListaPartidasActivas[i]->Conectado2) == 0)
+	{
+		i++;
+	}
+	
+	ListaPartidasActivas[i]->Conectado1 = Jugador1;
+	ListaPartidasActivas[i]->Conectado2 = Jugador2;
+	pthread_mutex_unlock(&mutex);
+}
+
 void *AtenderCliente (void *socket)
 {
 	int sock_conn;
@@ -431,6 +458,8 @@ void *AtenderCliente (void *socket)
 	char Respuesta[1000];
 	int ret;
 	
+	char Usuario[80];
+	char UsuarioContrincante[80];
 	
 	int terminar = 0;
 	// Entramos en un bucle para atender todas las peticiones de este cliente
@@ -461,7 +490,7 @@ void *AtenderCliente (void *socket)
 			}
 			
 			//Inicializamos la conexión al servidor MySQL
-			conn = mysql_real_connect (conn, "10.4.119.6","root", "mysql", "M3BD", 0, NULL, 0);
+			conn = mysql_real_connect (conn, "localhost", "root", "mysql", "M3BD", 0, NULL, 0);
 			if (conn==NULL)
 			{
 				printf ("Error al inicializar la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -473,7 +502,6 @@ void *AtenderCliente (void *socket)
 		{
 		case 0: //Piden desconectarse del servidor
 		{
-			char Usuario[80];
 			p = strtok(NULL, "/");
 			strcpy (Usuario, p); //Ya tenemos el usuario
 			EliminarJugadorConectado(&ListaUsuariosConectados, Usuario);
@@ -498,7 +526,6 @@ void *AtenderCliente (void *socket)
 		
 		case 1: //Piden iniciar sesion con su cuenta
 		{
-			char Usuario[80];
 			char Contrasena[80];
 			p = strtok(NULL, "/");
 			strcpy (Usuario, p); // Ya tenemos el usuario
@@ -530,7 +557,6 @@ void *AtenderCliente (void *socket)
 		
 		case 2: //Piden crearse una nueva cuenta
 		{
-			char Usuario[80];
 			char Contrasena[80];
 			p = strtok(NULL, "/");
 			strcpy (Usuario, p); // Ya tenemos el usuario
@@ -549,7 +575,6 @@ void *AtenderCliente (void *socket)
 		
 		case 3: //Piden calcular los puntos que ha obtenido un jugador en todas las partidas
 		{
-			char Usuario[80];
 			p = strtok(NULL, "/");
 			strcpy (Usuario, p); // Ya tenemos el usuario
 			
@@ -567,19 +592,19 @@ void *AtenderCliente (void *socket)
 		
 		case 4: //Consulta para el numero total de partidas ganadas por un jugador
 		{
-			char Usuario[80];
+			char UsuarioConsultado[80];
 			p = strtok(NULL, "/");
-			strcpy (Usuario, p); // Ya tenemos el usuario
+			strcpy (UsuarioConsultado, p); // Ya tenemos el usuario
 			
-			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, UsuarioConsultado);
 			
 			//Creamos el string para poder hacer la consulta a MySQL
 			//con una variable, que es la lista de partidas ganadas por el jugador buscado
 			strcpy (ConsultaResultante,"SELECT Partida.Identificador FROM Partida, Jugador WHERE Jugador.Nombre = '");
-			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante, UsuarioConsultado);
 			strcat (ConsultaResultante,"' AND Jugador.Identificador = Partida.Ganador");
 			
-			ObtenerPartidasGanadasJugador(conn, Usuario, Respuesta);
+			ObtenerPartidasGanadasJugador(conn, UsuarioConsultado, Respuesta);
 			printf ("Respuesta: %s\n", Respuesta);
 			write (sock_conn, Respuesta, strlen(Respuesta));
 		}	
@@ -587,17 +612,17 @@ void *AtenderCliente (void *socket)
 		
 		case 5: //Consulta para el numero total de partidas jugadas por un jugador
 		{
-			char Usuario[80];
+			char UsuarioConsultado[80];
 			p = strtok(NULL, "/");
-			strcpy (Usuario, p); // Ya tenemos el usuario
+			strcpy (UsuarioConsultado, p); // Ya tenemos el usuario
 			
-			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, UsuarioConsultado);
 			
 			strcpy (ConsultaResultante,"SELECT Participacion.Partida FROM Participacion, Jugador WHERE Jugador.Nombre = '");
-			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante, UsuarioConsultado);
 			strcat (ConsultaResultante,"' AND Jugador.Identificador = Participacion.Jugador");
 			
-			ObtenerPartidasJugadasJugador(conn, Usuario, Respuesta);
+			ObtenerPartidasJugadasJugador(conn, UsuarioConsultado, Respuesta);
 			printf ("Respuesta: %s\n", Respuesta);
 			write (sock_conn, Respuesta, strlen(Respuesta));
 		}
@@ -610,6 +635,36 @@ void *AtenderCliente (void *socket)
 			sprintf(Respuesta, "6/%s", TablaJugadoresConectados);
 			printf ("Respuesta: %s\n", Respuesta);
 			write (sock_conn, Respuesta, strlen(Respuesta));
+		}
+		break;
+		
+		case 7: //Peticion para gestionar inicio de partida
+		{
+			char Gestion[20];
+			p = strtok(NULL, "/"); //Obtenemos la gestion a realizar
+			strcpy (Gestion, p);
+			p = strtok(NULL, "/"); //Obtenemos el nombre del contrincante
+			strcpy (UsuarioContrincante, p);
+			
+			int SocketContrincante = BuscarSocketJugador(&ListaUsuariosConectados, UsuarioContrincante);
+			
+			if (strcmp(Gestion, "ENVIAR") == 0) //El usuario quiere solicitar un duelo
+			{
+				sprintf(Respuesta, "7/RECIBIR/%s", Usuario);
+				printf("Respuesta: %s\n", Respuesta);
+				write(SocketContrincante, Respuesta, strlen(Respuesta));
+			}
+			else if (strcmp(Gestion, "ACEPTAR") == 0) //El usuario quiere aceptar un duelo recibido
+			{
+				sprintf(Respuesta, "7/ACEPTADO/%s", Usuario);
+				write(SocketContrincante, Respuesta, strlen(Respuesta));
+				CrearPartida(&ListaPartidasActivas, UsuarioContrincante, Usuario);
+			}
+			else if (strcmp(Gestion, "RECHAZAR") == 0) //El usuario quiere rechazar un duelo recibido
+			{
+				sprintf(Respuesta, "7/RECHAZADO/%s", Usuario);
+				write(SocketContrincante, Respuesta, strlen(Respuesta));
+			}
 		}
 		break;
 		}
