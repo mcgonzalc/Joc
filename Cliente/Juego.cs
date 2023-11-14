@@ -44,17 +44,45 @@ namespace Cliente
 
         }
 
+        Timer t1 = new Timer();
+        int velocidad = 20;
+        Timer t2 = new Timer();
         private void Juego_KeyDown(object sender, KeyEventArgs e)
         {
-            int y = Jugador1.Location.Y;
-            int x = Jugador1.Location.X;
-            if (e.KeyCode == Keys.Space || e.KeyCode == Keys.W)
-            {
-                y -= 100;
-            }
-            Point movimiento = new Point(x, y);
-            Jugador1.Location = movimiento;
+            t1.Interval = 20;
+            t1.Tick += new EventHandler(Temporizador_Tick);
+            t2.Interval = 20;
+            t2.Tick += new EventHandler(Temporizador_Tick);
 
+            if (e.KeyCode == Keys.W)
+            {
+                Jugador1.Top += velocidad;
+                t1.Start();
+            }
+            if (e.KeyCode == Keys.Up)
+            {
+                Jugador2.Top += velocidad;
+                t2.Start();
+            }
+
+        }
+
+        private void Temporizador_Tick(object sender, EventArgs e)
+        {
+            if (Jugador1.Top + Jugador1.Height < this.Height)
+            {
+                Jugador1.Top += 5;
+            }
+            else 
+            {
+                t1.Stop();
+            }
+            if (Jugador2.Top + Jugador2.Height < this.Height)
+            {
+                Jugador2.Top += 5;
+            }
+            else
+                t2.Stop();
         }
     }
 }

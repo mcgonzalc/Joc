@@ -22,3 +22,6 @@ C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\C
 C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.pdb
 C:\Users\prord\OneDrive\Escritorio\UPC\2b\SO\Basededatos\Joc\Cliente\obj\Debug\Cliente.Juego.resources
 D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.Juego.resources
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\bin\Debug\Microsoft.WindowsAPICodePack.dll
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\bin\Debug\Microsoft.WindowsAPICodePack.xml
+D:\Nextcloud\Universitat\Sistemes operatius\Repositoris\Joc\Cliente\obj\Debug\Cliente.csproj.CopyComplete
