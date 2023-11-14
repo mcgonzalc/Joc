@@ -26,12 +26,19 @@ typedef struct {
 
 typedef struct {
 	
-	Conectado Jugador1;
-	Conectado Jugador2;
+	int NumeroPartida;
+	char Jugador1[80];
+	char Jugador2[80];
 	int PuntosJugador1;
 	int PuntosJugador2;
 	
-}PartidasActivas;
+}PartidaActiva;
+
+typedef struct {
+	
+	PartidaActiva PartidasActivas[50];
+	
+}ListaPartidasActivas;
 
 int ResultadoConsulta;
 // Estructura especial para almacenar resultados de consultas 
@@ -39,7 +46,7 @@ MYSQL_RES *resultado;
 MYSQL_ROW row;
 char ConsultaResultante[1250];
 ListaConectados ListaUsuariosConectados;
-PartidasActivas ListaPartidasActivas;
+ListaPartidasActivas ListaPartidasPreparadas;
 int sockets[100];
 int SocketsCreados;
 
@@ -308,6 +315,7 @@ void IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socke
 		}
 	}
 }
+
 void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
 {
 	int PuntosTotales = 0;
@@ -428,19 +436,23 @@ void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 		sprintf(Respuesta, "5/%d", PartidasJugadas);
 }
 
-void CrearPartida(PartidasActivas *ListaPartidasActivas, char Jugador1[80], char Jugador2[80])
+void CrearPartida(ListaPartidasActivas *ListaPartidasPreparadas, char Jugador1[80], char Jugador2[80])
 {
 	pthread_mutex_lock(&mutex);
 	int i;
 	
 	//Buscamos un hueco para poner una partida en nuestra tabla de partidas
-	while (strcmp(ListaPartidasActivas[i]->Conectado1, ListaPartidasActivas[i]->Conectado2) == 0)
+	while (ListaPartidasPreparadas->PartidasActivas[i].NumeroPartida != -1)
 	{
 		i++;
 	}
 	
-	ListaPartidasActivas[i]->Conectado1 = Jugador1;
-	ListaPartidasActivas[i]->Conectado2 = Jugador2;
+	//Inicializamos la partida con los nombres de los jugadores y reinicializamos el marcador
+	ListaPartidasPreparadas->PartidasActivas[i].NumeroPartida = i;
+	strcpy(ListaPartidasPreparadas->PartidasActivas[i].Jugador1, Jugador1);
+	strcpy(ListaPartidasPreparadas->PartidasActivas[i].Jugador2, Jugador2);
+	ListaPartidasPreparadas->PartidasActivas[i].PuntosJugador1 = 0;
+	ListaPartidasPreparadas->PartidasActivas[i].PuntosJugador2 = 0;
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -658,7 +670,7 @@ void *AtenderCliente (void *socket)
 			{
 				sprintf(Respuesta, "7/ACEPTADO/%s", Usuario);
 				write(SocketContrincante, Respuesta, strlen(Respuesta));
-				CrearPartida(&ListaPartidasActivas, UsuarioContrincante, Usuario);
+				CrearPartida(&ListaPartidasPreparadas, UsuarioContrincante, Usuario);
 			}
 			else if (strcmp(Gestion, "RECHAZAR") == 0) //El usuario quiere rechazar un duelo recibido
 			{
@@ -679,20 +691,19 @@ int main(int argc, char *argv[])
 	int sock_conn, sock_listen;
 	struct sockaddr_in serv_adr;
 	
-	// INICIALITZACIONS
-	// Obrim el socket
+	//Abrimos el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		printf("Error creando el socket\n");
-	// Fem el bind al port
+	//Hacemos bind al puerto
 	
 	
-	memset(&serv_adr, 0, sizeof(serv_adr)); // inicializa a cero serv_addr
+	memset(&serv_adr, 0, sizeof(serv_adr)); //Inicializa a cero serv_addr
 	serv_adr.sin_family = AF_INET;
 	
-	// asocia el socket a cualquiera de las IP de la m?quina. 
+	//Asocia el socket a cualquiera de las IP de la maquina y 
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
-	// establecemos el puerto de escucha
+	//Establecemos el puerto de escucha
 	serv_adr.sin_port = htons(50009);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
