@@ -63,9 +63,9 @@ namespace Cliente.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap jugador_2 {
+        internal static System.Drawing.Bitmap jugador_21 {
             get {
-                object obj = ResourceManager.GetObject("jugador_2", resourceCulture);
+                object obj = ResourceManager.GetObject("jugador_21", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
