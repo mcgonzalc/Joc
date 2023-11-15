@@ -32,12 +32,12 @@ namespace Cliente
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Juego));
             this.Jugador1 = new System.Windows.Forms.PictureBox();
+            this.Jugador2 = new System.Windows.Forms.PictureBox();
             this.pelota = new System.Windows.Forms.PictureBox();
             this.Temporizador = new System.Windows.Forms.Timer(this.components);
-            this.Jugador2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pelota)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pelota)).BeginInit();
             this.SuspendLayout();
             // 
             // Jugador1
@@ -51,11 +51,22 @@ namespace Cliente
             this.Jugador1.TabIndex = 0;
             this.Jugador1.TabStop = false;
             // 
+            // Jugador2
+            // 
+            this.Jugador2.BackColor = System.Drawing.Color.Transparent;
+            this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
+            this.Jugador2.Location = new System.Drawing.Point(27, 220);
+            this.Jugador2.Name = "Jugador2";
+            this.Jugador2.Size = new System.Drawing.Size(74, 89);
+            this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.Jugador2.TabIndex = 1;
+            this.Jugador2.TabStop = false;
+            // 
             // pelota
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(338, 245);
+            this.pelota.Location = new System.Drawing.Point(351, 277);
             this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pelota.Name = "pelota";
             this.pelota.Size = new System.Drawing.Size(60, 62);
@@ -67,25 +78,14 @@ namespace Cliente
             // 
             this.Temporizador.Tick += new System.EventHandler(this.Temporizador_Tick);
             // 
-            // Jugador2
-            // 
-            this.Jugador2.BackColor = System.Drawing.Color.Transparent;
-            this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_21;
-            this.Jugador2.Location = new System.Drawing.Point(49, 235);
-            this.Jugador2.Name = "Jugador2";
-            this.Jugador2.Size = new System.Drawing.Size(76, 72);
-            this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.Jugador2.TabIndex = 3;
-            this.Jugador2.TabStop = false;
-            // 
             // Juego
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(738, 414);
-            this.Controls.Add(this.Jugador2);
             this.Controls.Add(this.pelota);
+            this.Controls.Add(this.Jugador2);
             this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -95,8 +95,8 @@ namespace Cliente
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Juego_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Juego_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pelota)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pelota)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -104,8 +104,8 @@ namespace Cliente
         #endregion
 
         private System.Windows.Forms.PictureBox Jugador1;
+        private System.Windows.Forms.PictureBox Jugador2;
         private System.Windows.Forms.PictureBox pelota;
         private System.Windows.Forms.Timer Temporizador;
-        private System.Windows.Forms.PictureBox Jugador2;
     }
 }
