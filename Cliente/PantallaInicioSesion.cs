@@ -26,7 +26,6 @@ namespace Cliente
         public PantallaSesionUsuario()
         {
             InitializeComponent();
-            CheckForIllegalCrossThreadCalls = false;
         }
 
         public void AtenderServidor()
@@ -59,9 +58,18 @@ namespace Cliente
                                 };
                                 threadsalaespera = new Thread(ts);
                                 threadsalaespera.Start();
-                                Usuario.ReadOnly = true;
-                                BotonInicioSesion.Enabled = false;
-                                BotonRegistroCuenta.Enabled = false;
+                                Usuario.Invoke(new Action(() =>
+                                {
+                                    Usuario.ReadOnly = true;
+                                }));
+                                BotonInicioSesion.Invoke(new Action(() =>
+                                {
+                                    BotonInicioSesion.Enabled = false;
+                                }));
+                                BotonRegistroCuenta.Invoke(new Action(() =>
+                                {
+                                    BotonRegistroCuenta.Enabled = false;
+                                }));
                             }
                           else if (RespuestaServidor == "NO")
                             {
@@ -130,8 +138,14 @@ namespace Cliente
         {
             if (OpcionInicioSesion.Checked == true)
             {
-                BotonInicioSesion.Enabled = true;
-                BotonRegistroCuenta.Enabled = false;
+                BotonInicioSesion.Invoke(new Action(() =>
+                {
+                    BotonInicioSesion.Enabled = true;
+                }));
+                BotonRegistroCuenta.Invoke(new Action(() =>
+                {
+                    BotonRegistroCuenta.Enabled = false;
+                }));
             }
         }
 
@@ -139,8 +153,14 @@ namespace Cliente
         {
             if (OpcionCuentaNueva.Checked == true)
             {
-                BotonInicioSesion.Enabled = false;
-                BotonRegistroCuenta.Enabled = true;
+                BotonInicioSesion.Invoke(new Action(() =>
+                {
+                    BotonInicioSesion.Enabled = false;
+                }));
+                BotonRegistroCuenta.Invoke(new Action(() =>
+                {
+                    BotonRegistroCuenta.Enabled = true;
+                }));
             }
         }
 
@@ -148,7 +168,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("10.4.119.5");
+            IPAddress direc = IPAddress.Parse("192.168.56.101");
             IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
@@ -190,7 +210,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("10.4.119.5");
+            IPAddress direc = IPAddress.Parse("192.168.56.101");
             IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
@@ -201,10 +221,22 @@ namespace Cliente
                 {
                     server.Connect(ipep); //Intentamos conectar el socket
                     this.BackColor = Color.Green;
-                    this.BotonCierreSesion.Enabled = true;
-                    this.BotonRegistroCuenta.Enabled = false;
-                    this.OpcionInicioSesion.Enabled = false;
-                    this.OpcionCuentaNueva.Enabled = false;
+                    BotonCierreSesion.Invoke(new Action(() =>
+                    {
+                        BotonCierreSesion.Enabled = true;
+                    }));
+                    BotonRegistroCuenta.Invoke(new Action(() =>
+                    {
+                        BotonRegistroCuenta.Enabled = false;
+                    }));
+                    OpcionInicioSesion.Invoke(new Action(() =>
+                    {
+                        OpcionInicioSesion.Enabled = false;
+                    }));
+                    OpcionCuentaNueva.Invoke(new Action(() =>
+                    {
+                        OpcionCuentaNueva.Enabled = false;
+                    }));
                     MessageBox.Show("Conectado al servidor correctamente");
                     string mensaje = "1/" + Usuario.Text + '/' + Contrasena.Text;
                     // Enviamos al servidor el nombre tecleado
@@ -252,13 +284,24 @@ namespace Cliente
                 this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
-                Usuario.ReadOnly = false;
-                OpcionCuentaNueva.Enabled = true;
-                OpcionInicioSesion.Enabled = true;
-
+                Usuario.Invoke(new Action(() =>
+                {
+                    Usuario.ReadOnly = false;
+                }));
+                OpcionCuentaNueva.Invoke(new Action(() =>
+                {
+                    OpcionCuentaNueva.Enabled = true;
+                }));
+                OpcionInicioSesion.Invoke(new Action(() =>
+                {
+                    OpcionInicioSesion.Enabled = true;
+                }));
                 //Reseteamos el contador de ventanas a 0
                 ListaVentanasDeEspera.Clear();
-                BotonCierreSesion.Enabled = false;
+                BotonCierreSesion.Invoke(new Action(() =>
+                {
+                    BotonCierreSesion.Enabled = false;
+                }));
             }
         }
 
