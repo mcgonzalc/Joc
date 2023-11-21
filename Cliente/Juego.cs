@@ -17,6 +17,11 @@ namespace Cliente
             InitializeComponent();
             this.BackgroundImageLayout = ImageLayout.Stretch;
         }
+        private int velocidadSalto = 10; 
+        private int alturaSalto = 100;    
+        private int sueloY;               
+        private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
+       
 
         private void Juego_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -44,45 +49,41 @@ namespace Cliente
 
         }
 
-        Timer t1 = new Timer();
-        int velocidad = 20;
-        Timer t2 = new Timer();
+
         private void Juego_KeyDown(object sender, KeyEventArgs e)
         {
-            t1.Interval = 20;
-            t1.Tick += new EventHandler(Temporizador_Tick);
-            t2.Interval = 20;
-            t2.Tick += new EventHandler(Temporizador_Tick);
+          
 
-            if (e.KeyCode == Keys.W)
+            if (e.KeyCode == Keys.Space && !enSalto)
             {
-                Jugador1.Top += velocidad;
-                t1.Start();
-            }
-            if (e.KeyCode == Keys.Up)
-            {
-                Jugador2.Top += velocidad;
-                t2.Start();
+                enSalto = true;
+                TimerSalto.Start();
             }
 
         }
-
+       
         private void Temporizador_Tick(object sender, EventArgs e)
         {
-            if (Jugador1.Top + Jugador1.Height < this.Height)
+            
+            Jugador1.Top -= velocidadSalto;
+            int x = Jugador1.Location.X;
+            if ( Jugador1.Top < sueloY - alturaSalto)
             {
-                Jugador1.Top += 5;
+                velocidadSalto = -velocidadSalto;
             }
-            else 
+
+            if (Jugador1.Location.Y> sueloY)
             {
-                t1.Stop();
+                TimerSalto.Stop();
+                enSalto = false;
+                velocidadSalto = Math.Abs(velocidadSalto);
+                Point salto = new Point(x, sueloY);
             }
-            if (Jugador2.Top + Jugador2.Height < this.Height)
-            {
-                Jugador2.Top += 5;
-            }
-            else
-                t2.Stop();
+        }
+
+        private void Juego_Load(object sender, EventArgs e)
+        {
+            sueloY = 237;
         }
     }
 }

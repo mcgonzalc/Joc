@@ -34,7 +34,7 @@ namespace Cliente
             this.Jugador1 = new System.Windows.Forms.PictureBox();
             this.Jugador2 = new System.Windows.Forms.PictureBox();
             this.pelota = new System.Windows.Forms.PictureBox();
-            this.Temporizador = new System.Windows.Forms.Timer(this.components);
+            this.TimerSalto = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pelota)).BeginInit();
@@ -44,7 +44,7 @@ namespace Cliente
             // 
             this.Jugador1.BackColor = System.Drawing.Color.Transparent;
             this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.Jugador1.Location = new System.Drawing.Point(588, 235);
+            this.Jugador1.Location = new System.Drawing.Point(587, 237);
             this.Jugador1.Name = "Jugador1";
             this.Jugador1.Size = new System.Drawing.Size(76, 72);
             this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -66,7 +66,7 @@ namespace Cliente
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(351, 277);
+            this.pelota.Location = new System.Drawing.Point(349, 247);
             this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pelota.Name = "pelota";
             this.pelota.Size = new System.Drawing.Size(60, 62);
@@ -74,9 +74,9 @@ namespace Cliente
             this.pelota.TabIndex = 2;
             this.pelota.TabStop = false;
             // 
-            // Temporizador
+            // TimerSalto
             // 
-            this.Temporizador.Tick += new System.EventHandler(this.Temporizador_Tick);
+            this.TimerSalto.Tick += new System.EventHandler(this.Temporizador_Tick);
             // 
             // Juego
             // 
@@ -92,6 +92,7 @@ namespace Cliente
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";
+            this.Load += new System.EventHandler(this.Juego_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Juego_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Juego_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).EndInit();
@@ -106,6 +107,6 @@ namespace Cliente
         private System.Windows.Forms.PictureBox Jugador1;
         private System.Windows.Forms.PictureBox Jugador2;
         private System.Windows.Forms.PictureBox pelota;
-        private System.Windows.Forms.Timer Temporizador;
+        private System.Windows.Forms.Timer TimerSalto;
     }
 }
