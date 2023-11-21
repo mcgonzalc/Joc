@@ -24,4 +24,3 @@
 
 ----------------
 - Versión 5 generada por Marc
-- Versión 4 verificada por Daniel
