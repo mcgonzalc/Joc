@@ -502,7 +502,7 @@ void *AtenderCliente (void *socket)
 			}
 			
 			//Inicializamos la conexión al servidor MySQL
-			conn = mysql_real_connect (conn, "localhost", "root", "mysql", "M3BD", 0, NULL, 0);
+			conn = mysql_real_connect (conn, "shiva2.upc.es", "root", "mysql", "M3BD", 0, NULL, 0);
 			if (conn==NULL)
 			{
 				printf ("Error al inicializar la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
