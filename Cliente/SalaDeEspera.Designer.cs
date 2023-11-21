@@ -38,9 +38,6 @@
             this.TablaUsuariosConectados = new System.Windows.Forms.DataGridView();
             this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BotonInvitacion = new System.Windows.Forms.Button();
-            this.HistorialChat = new System.Windows.Forms.RichTextBox();
-            this.BotonEnviarMensajeChat = new System.Windows.Forms.Button();
-            this.MensajeAEnviarChat = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).BeginInit();
             this.SuspendLayout();
             // 
@@ -154,45 +151,11 @@
             this.BotonInvitacion.UseVisualStyleBackColor = true;
             this.BotonInvitacion.Click += new System.EventHandler(this.BotonInvitacion_Click);
             // 
-            // HistorialChat
-            // 
-            this.HistorialChat.Enabled = false;
-            this.HistorialChat.Location = new System.Drawing.Point(767, 31);
-            this.HistorialChat.Name = "HistorialChat";
-            this.HistorialChat.Size = new System.Drawing.Size(259, 191);
-            this.HistorialChat.TabIndex = 11;
-            this.HistorialChat.Text = "";
-            // 
-            // BotonEnviarMensajeChat
-            // 
-            this.BotonEnviarMensajeChat.Enabled = false;
-            this.BotonEnviarMensajeChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BotonEnviarMensajeChat.Location = new System.Drawing.Point(947, 241);
-            this.BotonEnviarMensajeChat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.BotonEnviarMensajeChat.Name = "BotonEnviarMensajeChat";
-            this.BotonEnviarMensajeChat.Size = new System.Drawing.Size(79, 54);
-            this.BotonEnviarMensajeChat.TabIndex = 12;
-            this.BotonEnviarMensajeChat.Text = "Enviar";
-            this.BotonEnviarMensajeChat.UseVisualStyleBackColor = true;
-            this.BotonEnviarMensajeChat.Click += new System.EventHandler(this.BotonEnviarMensajeChat_Click);
-            // 
-            // MensajeAEnviarChat
-            // 
-            this.MensajeAEnviarChat.Enabled = false;
-            this.MensajeAEnviarChat.Location = new System.Drawing.Point(767, 243);
-            this.MensajeAEnviarChat.Name = "MensajeAEnviarChat";
-            this.MensajeAEnviarChat.Size = new System.Drawing.Size(174, 52);
-            this.MensajeAEnviarChat.TabIndex = 13;
-            this.MensajeAEnviarChat.Text = "";
-            // 
             // SalaDeEspera
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1050, 315);
-            this.Controls.Add(this.MensajeAEnviarChat);
-            this.Controls.Add(this.BotonEnviarMensajeChat);
-            this.Controls.Add(this.HistorialChat);
+            this.ClientSize = new System.Drawing.Size(765, 315);
             this.Controls.Add(this.BotonInvitacion);
             this.Controls.Add(this.TablaUsuariosConectados);
             this.Controls.Add(this.BotonConsulta);
@@ -223,8 +186,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
         private System.Windows.Forms.Button BotonInvitacion;
         private System.Windows.Forms.DataGridView TablaUsuariosConectados;
-        private System.Windows.Forms.RichTextBox HistorialChat;
-        private System.Windows.Forms.Button BotonEnviarMensajeChat;
-        private System.Windows.Forms.RichTextBox MensajeAEnviarChat;
     }
 }

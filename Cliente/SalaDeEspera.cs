@@ -164,19 +164,6 @@ namespace Cliente
                     Juego Juego = new Juego();
                     ListaVentanasJuego.Add(Juego);
                     Juego.ShowDialog();
-
-                    HistorialChat.Invoke(new Action(() =>
-                    {
-                        HistorialChat.Enabled = true;
-                    }));
-                    MensajeAEnviarChat.Invoke(new Action(() =>
-                    {
-                        MensajeAEnviarChat.Enabled = true;
-                    }));
-                    BotonEnviarMensajeChat.Invoke(new Action(() =>
-                    {
-                        BotonEnviarMensajeChat.Enabled = true;
-                    }));
                 }
                 else if (PeticionDuelo == DialogResult.No)
                 {
@@ -218,31 +205,6 @@ namespace Cliente
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
-
-        //Qué hacer cuando pulsamos el botón de enviar un mensaje por el chat
-        private void BotonEnviarMensajeChat_Click(object sender, EventArgs e)
-        {
-            //Comprobamos que hay texto alguno para enviar
-            if (MensajeAEnviarChat != null)
-            {
-                //Enviamos un mensaje al servidor para enviar al contrincante el mensaje que queremos comunicarle
-                string mensaje = "8/ENVIAR/" + JugadorContrincante + "/" + MensajeAEnviarChat.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-
-                //Vaciamos el contenedor del mensaje a enviar puesto que ya lo hemos hecho
-                MensajeAEnviarChat.Invoke(new Action(() =>
-                {
-                    MensajeAEnviarChat.Text = null;
-                }));
-            }
-            //No hacer nada puesto que no hay texto para enviar
-            else
-            {
-            }
-        }
-
-        //Qué hacer cuando pulsamos el botón de generar una invitación para una partida
         private void BotonInvitacion_Click(object sender, EventArgs e)
         {
             //Comprobamos si ya hay algún jugador seleccionado de la tabla de conectados y no es el nombre del usuario logueado en este cliente
