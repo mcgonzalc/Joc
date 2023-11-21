@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.LabelUsuarioConsultado = new System.Windows.Forms.TextBox();
             this.UsuarioaConsultar = new System.Windows.Forms.TextBox();
             this.LabelConsulta = new System.Windows.Forms.TextBox();
@@ -39,7 +38,6 @@
             this.TablaUsuariosConectados = new System.Windows.Forms.DataGridView();
             this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BotonInvitacion = new System.Windows.Forms.Button();
-            this.TiempoLimiteInvitacion = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.TablaUsuariosConectados)).BeginInit();
             this.SuspendLayout();
             // 
@@ -153,11 +151,6 @@
             this.BotonInvitacion.UseVisualStyleBackColor = true;
             this.BotonInvitacion.Click += new System.EventHandler(this.BotonInvitacion_Click);
             // 
-            // TiempoLimiteInvitacion
-            // 
-            this.TiempoLimiteInvitacion.Interval = 60000;
-            this.TiempoLimiteInvitacion.Tick += new System.EventHandler(this.TiempoLimiteInvitacion_Tick);
-            // 
             // SalaDeEspera
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -193,6 +186,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
         private System.Windows.Forms.Button BotonInvitacion;
         private System.Windows.Forms.DataGridView TablaUsuariosConectados;
-        private System.Windows.Forms.Timer TiempoLimiteInvitacion;
     }
 }

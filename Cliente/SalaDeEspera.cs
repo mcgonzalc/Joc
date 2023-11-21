@@ -26,7 +26,6 @@ namespace Cliente
         public SalaDeEspera(Socket server, string Usuario)
         {
             InitializeComponent();
-            CheckForIllegalCrossThreadCalls = false;
             this.server = server;
             this.Usuario = Usuario;
         }
@@ -61,7 +60,10 @@ namespace Cliente
         //Cómo modificar el texto del resultado de la consulta realizada
         public void ModificarResultadoConsulta(string resultado)
         {
-            Resultado.Text = resultado;
+            Resultado.Invoke(new Action(() =>
+            {
+                Resultado.Text = resultado;
+            }));
         }
 
         //Cómo actualizar la lista de usuarios conectados
@@ -78,22 +80,24 @@ namespace Cliente
                 //Cambiamos el nombre de las filas que ya tenemos creadas con los usuarios nuevos
                 for (int i = 0; i < (usuariosconectadosantes-1); i++)
                 {
-                    TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i+1];
-                    TablaUsuariosConectados.Refresh();
+                    TablaUsuariosConectados.Invoke(new Action(() =>
+                    {
+                        TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i + 1];
+                        TablaUsuariosConectados.Refresh();
+                    }));
                 }
-
-                TablaUsuariosConectados.Refresh();
 
                 //Borramos las filas que no usamos en caso de que ahora tengamos menos usuarios
                 if (usuariosconectadosahora < usuariosconectadosantes)
                 {
                     for (int i = usuariosconectadosahora; i < usuariosconectadosantes; i++)
                     {
-                        TablaUsuariosConectados.Rows.RemoveAt(usuariosconectadosahora);
-                        TablaUsuariosConectados.Refresh();
+                        TablaUsuariosConectados.Invoke(new Action(() =>
+                        {
+                            TablaUsuariosConectados.Rows.RemoveAt(usuariosconectadosahora);
+                            TablaUsuariosConectados.Refresh();
+                        }));
                     }
-
-                    TablaUsuariosConectados.Refresh();
                 }
 
                 //Creamos las filas que necesitamos en caso de que ahora dispongamos de más usuarios conectados
@@ -105,8 +109,11 @@ namespace Cliente
                         string nombrenuevo = Convert.ToString(Usuarios[i+1]);
 
                         //Creamos una nueva fila para cada usuario que queremos poner
-                        TablaUsuariosConectados.Rows.Add(nombrenuevo);
-                        TablaUsuariosConectados.Refresh();
+                        TablaUsuariosConectados.Invoke(new Action(() =>
+                        {
+                            TablaUsuariosConectados.Rows.Add(nombrenuevo);
+                            TablaUsuariosConectados.Refresh();
+                        }));
                     }
                 }
             }
@@ -120,8 +127,11 @@ namespace Cliente
                     string nombrenuevo = Convert.ToString(Usuarios[i]);
 
                     //Creamos una nueva fila para cada usuario que queremos poner
-                    TablaUsuariosConectados.Rows.Add(nombrenuevo);
-                    TablaUsuariosConectados.Refresh();
+                    TablaUsuariosConectados.Invoke(new Action(() =>
+                    {
+                        TablaUsuariosConectados.Rows.Add(nombrenuevo);
+                        TablaUsuariosConectados.Refresh();
+                    }));
                     listacargada = true;
                 }
             }
@@ -136,10 +146,10 @@ namespace Cliente
             if (Gestion == "RECIBIR")
             {
                 //Deshabilitamos el botón de invitación para evitar que el jugador invite a alguien mientras está recibiendo una invitación
-                BotonInvitacion.Enabled = false;
-
-                TiempoLimiteInvitacion.Enabled = true;
-                TiempoLimiteInvitacion.Start();
+                BotonInvitacion.Invoke(new Action(() =>
+                {
+                    BotonInvitacion.Enabled = false;
+                }));
 
                 DialogResult PeticionDuelo = MessageBox.Show("Has recibido una solicitud de partida por parte de " + JugadorContrincante + ", ¿deseas aceptar su petición?", "Invitación recibida", MessageBoxButtons.YesNo);
                 if (PeticionDuelo == DialogResult.Yes)
@@ -148,8 +158,6 @@ namespace Cliente
                     string mensaje = "7/ACEPTAR/" + JugadorContrincante;
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
-
-                    TiempoLimiteInvitacion.Stop();
 
                     //Abrimos el juego puesto que el jugador ya ha aceptado la partida
                     ListaVentanasJuego.Clear();
@@ -164,18 +172,16 @@ namespace Cliente
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
-                    TiempoLimiteInvitacion.Stop();
-
                     //Habilitamos el botón de invitación para que el jugador pueda invitar a otra persona
-                    BotonInvitacion.Enabled = true;
+                    BotonInvitacion.Invoke(new Action(() =>
+                    {
+                        BotonInvitacion.Enabled = true;
+                    }));
                 }
             }
             //Qué sucede cuando el contrincante ha aceptado la partida
             if (Gestion == "ACEPTADO")
             {
-                TiempoLimiteInvitacion.Stop();
-                TiempoLimiteInvitacion.Enabled = false;
-
                 //Abrimos el juego puesto que el otro jugador ha aceptado la partida
                 ListaVentanasJuego.Clear();
                 Juego Juego = new Juego();
@@ -185,11 +191,11 @@ namespace Cliente
             //Qué sucede cuando el contrincante ha rechazado la partida
             if (Gestion == "RECHAZADO")
             {
-                TiempoLimiteInvitacion.Stop();
-                TiempoLimiteInvitacion.Enabled = false;
-
                 MessageBox.Show("El usuario " + JugadorContrincante + " ha rechazado tu solicitud de partida.");
-                BotonInvitacion.Enabled = true;
+                BotonInvitacion.Invoke(new Action(() =>
+                {
+                    BotonInvitacion.Enabled = true;
+                }));
             }
         }
         private void SalaDeEspera_Load(object sender, EventArgs e)
@@ -199,7 +205,6 @@ namespace Cliente
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
-
         private void BotonInvitacion_Click(object sender, EventArgs e)
         {
             //Comprobamos si ya hay algún jugador seleccionado de la tabla de conectados y no es el nombre del usuario logueado en este cliente
@@ -211,10 +216,10 @@ namespace Cliente
                 server.Send(msg);
 
                 //Deshabilitamos el botón para poder evitar más de una invitación a la vez
-                BotonInvitacion.Enabled = false;
-
-                TiempoLimiteInvitacion.Enabled = true;
-                TiempoLimiteInvitacion.Start();
+                BotonInvitacion.Invoke(new Action(() =>
+                {
+                    BotonInvitacion.Enabled = false;
+                }));
             }
 
             //Indicamos al usuario de seleccionar un jugador para poder realizar el proceso de invitación
@@ -222,32 +227,6 @@ namespace Cliente
             {
                 MessageBox.Show("No has seleccionado ningún jugador válido para invitar, selecciona a uno para empezar la partida");
             }
-        }
-
-        private void TiempoLimiteInvitacion_Tick(object sender, EventArgs e)
-        {
-            TiempoLimiteInvitacion.Stop();
-
-            bool JugadorEncontrado = false;
-
-            while (JugadorEncontrado == false)
-            {
-                for (int i = 0; i < TablaUsuariosConectados.RowCount; i++)
-                {
-                    if (Convert.ToString(TablaUsuariosConectados.Rows[i].Cells[0].Value) == JugadorContrincante)
-                    {
-                        JugadorEncontrado = true;
-                    }
-                }
-            }
-            
-            if (JugadorEncontrado == false)
-            {
-                MessageBox.Show("El oponente se ha retirado, ya puedes volver a empezar otra partida con otro jugador");
-                BotonInvitacion.Enabled = true;
-            }
-
-            TiempoLimiteInvitacion.Enabled = false;
         }
     }
 }
