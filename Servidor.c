@@ -49,6 +49,8 @@ ListaConectados ListaUsuariosConectados;
 ListaPartidasActivas ListaPartidasPreparadas;
 int sockets[100];
 int SocketsCreados;
+int PosicionSocket;
+int SocketVacioEncontrado;
 
 //Estructura necesaria para acceso excluyente
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -342,20 +344,20 @@ void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512]
 	//En caso de obtener resultados, se analiza cada fila hasta llegar
 	//a la primera fila con un valor nulo
 	else
-	while (row != NULL)
+		while (row != NULL)
 	{
-		//Convertimos a int la columna 0, que es la que contiene
-		//los puntos de la partida analizada
+			//Convertimos a int la columna 0, que es la que contiene
+			//los puntos de la partida analizada
 			
-		int PuntosPartida = atoi(row[0]);
+			int PuntosPartida = atoi(row[0]);
 			
-		PuntosTotales = PuntosTotales + PuntosPartida;
+			PuntosTotales = PuntosTotales + PuntosPartida;
 			
-		//Obtenemos la siguiente fila para el siguiente loop
-		row = mysql_fetch_row (resultado);
+			//Obtenemos la siguiente fila para el siguiente loop
+			row = mysql_fetch_row (resultado);
 	}
-	pthread_mutex_unlock(&mutex);
-	sprintf(Respuesta, "3/%d", PuntosTotales);
+		pthread_mutex_unlock(&mutex);
+		sprintf(Respuesta, "3/%d", PuntosTotales);
 }
 
 void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
@@ -385,17 +387,17 @@ void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 	//En caso de obtener resultados, se analiza cada fila hasta llegar
 	//a la primera fila con un valor nulo
 	else
-	while (row != NULL)
+		while (row != NULL)
 	{
-		//Sumamos 1 partida ganada por cada fila analizada
-		PartidasGanadas++;
+			//Sumamos 1 partida ganada por cada fila analizada
+			PartidasGanadas++;
 			
-		//Obtenemos la siguiente fila para el siguiente loop
-		row = mysql_fetch_row (resultado);
+			//Obtenemos la siguiente fila para el siguiente loop
+			row = mysql_fetch_row (resultado);
 	}
-	
-	pthread_mutex_unlock(&mutex);
-	sprintf(Respuesta, "4/%d", PartidasGanadas);
+		
+		pthread_mutex_unlock(&mutex);
+		sprintf(Respuesta, "4/%d", PartidasGanadas);
 }
 
 void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
@@ -464,8 +466,6 @@ void *AtenderCliente (void *socket)
 	s= (int *) socket;
 	sock_conn= *s;
 	
-	//int socket_conn = * (int *) socket;
-	
 	char Peticion[1000];
 	char Respuesta[1000];
 	int ret;
@@ -502,7 +502,7 @@ void *AtenderCliente (void *socket)
 			}
 			
 			//Inicializamos la conexión al servidor MySQL
-			conn = mysql_real_connect (conn, "shiva2.upc.es", "root", "mysql", "M3BD", 0, NULL, 0);
+			conn = mysql_real_connect (conn, "localhost", "root", "mysql", "M3BD", 0, NULL, 0);
 			if (conn==NULL)
 			{
 				printf ("Error al inicializar la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -687,7 +687,6 @@ void *AtenderCliente (void *socket)
 
 int main(int argc, char *argv[])
 {
-	
 	int sock_conn, sock_listen;
 	struct sockaddr_in serv_adr;
 	
@@ -709,10 +708,18 @@ int main(int argc, char *argv[])
 		printf ("Error al bind\n");
 	
 	if (listen(sock_listen, 3) < 0)
-		printf("Error en el Listen\n");
+		printf("Error en el listen\n");
+	
+	//Ponemos todos los sockets con valor -1 para indicar que estan libres
+	for (int i = 0; i < 100; i++)
+	{
+		sockets[i] = -1;
+	}
 	
 	pthread_t thread;
 	SocketsCreados = 0;
+	
+	//Hacemos un bucle infinito para cargar los threads a medida que se van creando
 	for (;;)
 	{
 		printf ("Escuchando\n");
@@ -720,13 +727,29 @@ int main(int argc, char *argv[])
 		sock_conn = accept(sock_listen, NULL, NULL);
 		printf ("He recibido conexion\n");
 		
-		sockets[SocketsCreados] = sock_conn;
-		//sock_conn es el socket que usaremos para este cliente
-		
-		// Crear thread y decirle lo que tiene que hacer
-		
-		pthread_create (&thread, NULL, AtenderCliente,&sockets[SocketsCreados]);
-		SocketsCreados=SocketsCreados+1;
+		//Buscamos un socket que este vacio para poder meter al siguiente cliente en dicho hueco
+		if (SocketsCreados < 100)
+		{
+			SocketVacioEncontrado = 0;
+			PosicionSocket = 0;
+			
+			while (SocketVacioEncontrado == 0)
+			{
+				if (sockets[PosicionSocket] == -1)
+				{
+					//sock_conn es el socket que usaremos para este cliente
+					sockets[PosicionSocket] = sock_conn;
+					
+					// Crear thread y decirle lo que tiene que hacer
+					pthread_create (&thread, NULL, AtenderCliente, &sockets[PosicionSocket]);
+					SocketsCreados=SocketsCreados+1;
+					SocketVacioEncontrado = 1;
+				}
+			}
+		}
+		else
+		{
+			printf("Se ha superado el límite de conexiones permitidas de manera simultanea\n");
+		}
 	}
-	
 }
