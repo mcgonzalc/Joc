@@ -43,7 +43,15 @@ namespace Cliente
                 string RespuestaServidor;
 
                 //El primer trozo es el código de la operación realizada
-                codigo = Convert.ToInt32(TrozosRespuesta[0]);
+                try
+                {
+                    codigo = Convert.ToInt32(TrozosRespuesta[0]);
+                }
+                catch(FormatException)
+                {
+                    codigo = 0;
+                }
+                
                 switch (codigo)
                 {
                     case 1:  //Queremos iniciar sesión en nuestra cuenta

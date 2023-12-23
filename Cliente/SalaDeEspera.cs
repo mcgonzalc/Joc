@@ -21,6 +21,7 @@ namespace Cliente
     {
         Socket server;
         bool listacargada = false;
+        bool SaladeEsperaAbierta = false;
         List<Juego> ListaVentanasJuego = new List<Juego>();
         string Usuario, JugadorContrincante;
         public SalaDeEspera(Socket server, string Usuario)
@@ -29,7 +30,6 @@ namespace Cliente
             this.server = server;
             this.Usuario = Usuario;
         }
-
         private void BotonConsulta_Click(object sender, EventArgs e)
         {
             if ((UsuarioaConsultar.Text != "") && (Consulta.SelectedIndex == 0)) //Queremos saber el número de partidas ganadas del jugador consultado
@@ -74,39 +74,60 @@ namespace Cliente
             int usuariosconectadosantes = TablaUsuariosConectados.RowCount;
             int usuariosconectadosahora = Convert.ToInt32(Usuarios[0]);
             
-            //Comprobamos si antes ya se han puesto datos en la tabla
-            if (listacargada == true)
-            {   
-                //Cambiamos el nombre de las filas que ya tenemos creadas con los usuarios nuevos
-                for (int i = 0; i < (usuariosconectadosantes-1); i++)
+            //Rellenamos la tabla de usuarios conectados si el formulario está abierto
+            if (SaladeEsperaAbierta == true)
+            {
+                //Comprobamos si antes ya se han puesto datos en la tabla
+                if (listacargada == true)
                 {
-                    TablaUsuariosConectados.Invoke(new Action(() =>
-                    {
-                        TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i + 1];
-                        TablaUsuariosConectados.Refresh();
-                    }));
-                }
-
-                //Borramos las filas que no usamos en caso de que ahora tengamos menos usuarios
-                if (usuariosconectadosahora < usuariosconectadosantes)
-                {
-                    for (int i = usuariosconectadosahora; i < usuariosconectadosantes; i++)
+                    //Cambiamos el nombre de las filas que ya tenemos creadas con los usuarios nuevos
+                    for (int i = 0; i < (usuariosconectadosantes - 1); i++)
                     {
                         TablaUsuariosConectados.Invoke(new Action(() =>
                         {
-                            TablaUsuariosConectados.Rows.RemoveAt(usuariosconectadosahora);
+                            TablaUsuariosConectados.Rows[i].Cells[0].Value = Usuarios[i + 1];
                             TablaUsuariosConectados.Refresh();
                         }));
                     }
+
+                    //Borramos las filas que no usamos en caso de que ahora tengamos menos usuarios
+                    if (usuariosconectadosahora < usuariosconectadosantes)
+                    {
+                        for (int i = usuariosconectadosahora; i < usuariosconectadosantes; i++)
+                        {
+                            TablaUsuariosConectados.Invoke(new Action(() =>
+                            {
+                                TablaUsuariosConectados.Rows.RemoveAt(usuariosconectadosahora);
+                                TablaUsuariosConectados.Refresh();
+                            }));
+                        }
+                    }
+
+                    //Creamos las filas que necesitamos en caso de que ahora dispongamos de más usuarios conectados
+                    else if (usuariosconectadosahora > usuariosconectadosantes)
+                    {
+                        for (int i = usuariosconectadosantes; i < usuariosconectadosahora; i++)
+                        {
+                            //Obtenemos el nombre del siguiente usuario conectado
+                            string nombrenuevo = Convert.ToString(Usuarios[i + 1]);
+
+                            //Creamos una nueva fila para cada usuario que queremos poner
+                            TablaUsuariosConectados.Invoke(new Action(() =>
+                            {
+                                TablaUsuariosConectados.Rows.Add(nombrenuevo);
+                                TablaUsuariosConectados.Refresh();
+                            }));
+                        }
+                    }
                 }
 
-                //Creamos las filas que necesitamos en caso de que ahora dispongamos de más usuarios conectados
-                else if (usuariosconectadosahora > usuariosconectadosantes)
+                //Rellenamos la tabla por primera vez
+                else if (listacargada == false)
                 {
-                    for (int i = usuariosconectadosantes; i < usuariosconectadosahora; i++)
+                    for (int i = 1; i < (Convert.ToInt32(Usuarios[0]) + 1); i++)
                     {
                         //Obtenemos el nombre del siguiente usuario conectado
-                        string nombrenuevo = Convert.ToString(Usuarios[i+1]);
+                        string nombrenuevo = Convert.ToString(Usuarios[i]);
 
                         //Creamos una nueva fila para cada usuario que queremos poner
                         TablaUsuariosConectados.Invoke(new Action(() =>
@@ -114,25 +135,8 @@ namespace Cliente
                             TablaUsuariosConectados.Rows.Add(nombrenuevo);
                             TablaUsuariosConectados.Refresh();
                         }));
+                        listacargada = true;
                     }
-                }
-            }
-
-            //Rellenamos la tabla por primera vez
-            else if (listacargada == false)
-            {
-                for (int i = 1; i < (Convert.ToInt32(Usuarios[0]) + 1); i++)
-                {
-                    //Obtenemos el nombre del siguiente usuario conectado
-                    string nombrenuevo = Convert.ToString(Usuarios[i]);
-
-                    //Creamos una nueva fila para cada usuario que queremos poner
-                    TablaUsuariosConectados.Invoke(new Action(() =>
-                    {
-                        TablaUsuariosConectados.Rows.Add(nombrenuevo);
-                        TablaUsuariosConectados.Refresh();
-                    }));
-                    listacargada = true;
                 }
             }
         }
@@ -200,11 +204,19 @@ namespace Cliente
         }
         private void SalaDeEspera_Load(object sender, EventArgs e)
         {
+            SaladeEsperaAbierta = true;
             //Enviamos un mensaje al servidor para actualizar la lista de conectados para la nueva ventana
             string mensaje = "6/";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
+
+        private void SalaDeEspera_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Indicamos de que la ventana de la sala de espera está cerrada
+            SaladeEsperaAbierta = false;
+        }
+
         private void BotonInvitacion_Click(object sender, EventArgs e)
         {
             //Comprobamos si ya hay algún jugador seleccionado de la tabla de conectados y no es el nombre del usuario logueado en este cliente

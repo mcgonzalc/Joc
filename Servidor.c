@@ -48,7 +48,7 @@ char ConsultaResultante[1250];
 ListaConectados ListaUsuariosConectados;
 ListaPartidasActivas ListaPartidasPreparadas;
 int sockets[100];
-int SocketsCreados;
+int SocketsOcupados;
 int PosicionSocket;
 int SocketVacioEncontrado;
 
@@ -527,9 +527,13 @@ void *AtenderCliente (void *socket)
 				ObtenerListaJugadoresConectados(&ListaUsuariosConectados, TablaJugadoresConectados);
 				sprintf(Respuesta, "6/%s", TablaJugadoresConectados);
 				
-				for (int i = 0; i < SocketsCreados; i++)
+				for (int i = 0; i < 100; i++)
 				{
-					write(sockets[i], Respuesta, strlen(Respuesta));
+					//Enviamos la actualizacion de la lista de conectados a los sockets que no esten ocupados
+					if (sockets[i] != -1 && sockets[i] != sock_conn)
+					{
+						write(sockets[i], Respuesta, strlen(Respuesta));
+					}
 				}
 			}
 			terminar = 1;
@@ -559,9 +563,13 @@ void *AtenderCliente (void *socket)
 				ObtenerListaJugadoresConectados(&ListaUsuariosConectados, TablaJugadoresConectados);
 				sprintf(Respuesta, "6/%s", TablaJugadoresConectados);
 				
-				for (int i = 0; i < (SocketsCreados-1); i++)
+				for (int i = 0; i < 100; i++)
 				{
-					write(sockets[i], Respuesta, strlen(Respuesta));
+					//Enviamos la actualizacion de la lista de conectados a los sockets que no esten ocupados
+					if (sockets[i] != -1 && sockets[i] != sock_conn)
+					{
+						write(sockets[i], Respuesta, strlen(Respuesta));
+					}
 				}
 			}
 		}
@@ -682,6 +690,8 @@ void *AtenderCliente (void *socket)
 		}
 	}
 	mysql_close (conn);
+	sockets[sock_conn] = -1;
+	SocketsOcupados = SocketsOcupados - 1;
 	close(sock_conn);
 }
 
@@ -717,18 +727,18 @@ int main(int argc, char *argv[])
 	}
 	
 	pthread_t thread;
-	SocketsCreados = 0;
+	SocketsOcupados = 0;
 	
 	//Hacemos un bucle infinito para cargar los threads a medida que se van creando
 	for (;;)
 	{
-		printf ("Escuchando\n");
+		printf ("Esperando conexion...\n");
 		
 		sock_conn = accept(sock_listen, NULL, NULL);
-		printf ("He recibido conexion\n");
+		printf ("Cliente conectado\n");
 		
 		//Buscamos un socket que este vacio para poder meter al siguiente cliente en dicho hueco
-		if (SocketsCreados < 100)
+		if (SocketsOcupados < 100)
 		{
 			SocketVacioEncontrado = 0;
 			PosicionSocket = 0;
@@ -742,9 +752,11 @@ int main(int argc, char *argv[])
 					
 					// Crear thread y decirle lo que tiene que hacer
 					pthread_create (&thread, NULL, AtenderCliente, &sockets[PosicionSocket]);
-					SocketsCreados=SocketsCreados+1;
+					SocketsOcupados=SocketsOcupados+1;
 					SocketVacioEncontrado = 1;
 				}
+				
+				PosicionSocket = PosicionSocket + 1;
 			}
 		}
 		else
