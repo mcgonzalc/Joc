@@ -82,6 +82,9 @@ namespace Cliente
                           else if (RespuestaServidor == "NO")
                             {
                                 MessageBox.Show("Combinación de usuario y contraseña incorrecta");
+                                this.BackColor = Color.Gray;
+                                server.Shutdown(SocketShutdown.Both);
+                                server.Close();
                             }
                         break;
 
@@ -104,7 +107,7 @@ namespace Cliente
                             }
                             else if (RespuestaServidor == "ERROR")
                             {
-                            MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
+                                MessageBox.Show("Ha ocurrido un error inesperado, prueba de intentarlo hacer más tarde");
                             }
                         break;
 
@@ -132,6 +135,12 @@ namespace Cliente
                         RespuestaServidor = TrozosRespuesta[1];
                         string JugadorContrincante = TrozosRespuesta[2];
                         ListaVentanasDeEspera[0].GestionesInicioPartida(RespuestaServidor, JugadorContrincante);
+                        break;
+                    
+                    case 8:
+                        string RemitenteMensaje = TrozosRespuesta[1];
+                        string MensajeChat = TrozosRespuesta[2];
+                        ListaVentanasDeEspera[0].GestionarMensajesChat(RemitenteMensaje, MensajeChat);
                         break;
                 }
             }

@@ -163,11 +163,19 @@ namespace Cliente
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
-                    //Abrimos el juego puesto que el jugador ya ha aceptado la partida
-                    ListaVentanasJuego.Clear();
-                    Juego Juego = new Juego();
-                    ListaVentanasJuego.Add(Juego);
-                    Juego.ShowDialog();
+                    HistorialChat.Invoke(new Action(() =>
+                    {
+                        HistorialChat.Text = "";
+                        HistorialChat.Enabled = true;
+                    }));
+                    MensajeChatAEnviar.Invoke(new Action(() =>
+                    {
+                        MensajeChatAEnviar.Enabled = true;
+                    }));
+                    BotonInicioPartida.Invoke(new Action(() =>
+                    {
+                        BotonInicioPartida.Enabled = true;
+                    }));
                 }
                 else if (PeticionDuelo == DialogResult.No)
                 {
@@ -186,11 +194,19 @@ namespace Cliente
             //Qué sucede cuando el contrincante ha aceptado la partida
             if (Gestion == "ACEPTADO")
             {
-                //Abrimos el juego puesto que el otro jugador ha aceptado la partida
-                ListaVentanasJuego.Clear();
-                Juego Juego = new Juego();
-                ListaVentanasJuego.Add(Juego);
-                Juego.ShowDialog();
+                HistorialChat.Invoke(new Action(() =>
+                {
+                    HistorialChat.Text = "";
+                    HistorialChat.Enabled = true;
+                }));
+                MensajeChatAEnviar.Invoke(new Action(() =>
+                {
+                    MensajeChatAEnviar.Enabled = true;
+                }));
+                BotonInicioPartida.Invoke(new Action(() =>
+                {
+                    BotonInicioPartida.Enabled = true;
+                }));
             }
             //Qué sucede cuando el contrincante ha rechazado la partida
             if (Gestion == "RECHAZADO")
@@ -201,7 +217,36 @@ namespace Cliente
                     BotonInvitacion.Enabled = true;
                 }));
             }
+            if (Gestion == "EMPEZAR")
+            {
+                //Deshabilitamos el chat y la posibilidad de enviar más mensajes puesto que se empieza la partida
+                HistorialChat.Invoke(new Action(() =>
+                {
+                    HistorialChat.Enabled = false;
+                }));
+
+                MensajeChatAEnviar.Invoke(new Action(() =>
+                {
+                    MensajeChatAEnviar.Enabled = false;
+                }));
+
+                BotonInicioPartida.Invoke(new Action(() =>
+                {
+                    BotonInicioPartida.Enabled = false;
+                }));
+
+                //Abrimos el juego puesto que se ha decidido de empezar ya la partida
+                if (ListaVentanasJuego.Count < 0)
+                {
+                    ListaVentanasJuego.Clear();
+                }
+                Juego Juego = new Juego();
+                ListaVentanasJuego.Add(Juego);
+                Juego.ShowDialog();
+            }
         }
+        
+        //Procesos de inicialización a la hora de abrir el formulario
         private void SalaDeEspera_Load(object sender, EventArgs e)
         {
             SaladeEsperaAbierta = true;
@@ -211,10 +256,86 @@ namespace Cliente
             server.Send(msg);
         }
 
+        //Código que se ejecuta a la hora de cerrar el formulario
         private void SalaDeEspera_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Indicamos de que la ventana de la sala de espera está cerrada
             SaladeEsperaAbierta = false;
+        }
+
+        //Qué sucede cuando pulsamos el botón para enviar un mensaje por el chat
+        private void BotonEnviarMensajeChat_Click(object sender, EventArgs e)
+        {
+            string mensaje = "8/" + JugadorContrincante + "/" + MensajeChatAEnviar.Text;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+            GestionarMensajesChat(Usuario, MensajeChatAEnviar.Text);
+            MensajeChatAEnviar.Text = "";
+        }
+
+        //Función para comprobar si hay un mensaje preparado para poder enviar por al chat
+        private void MensajeChatAEnviar_TextChanged(object sender, EventArgs e)
+        {
+            if (MensajeChatAEnviar.Text != "")
+            {
+                BotonEnviarMensajeChat.Enabled = true;
+            }
+            else
+            {
+                BotonEnviarMensajeChat.Enabled = false;
+            }
+        }
+
+        //Función para introducir mensajes en el historial del chat
+        public void GestionarMensajesChat(string remitente, string mensaje)
+        {
+            HistorialChat.Invoke(new Action(() =>
+            {
+                //Comprueba que no haya texto escrito anteriormente en el historial del chat
+                if (HistorialChat.Text != "")
+                {
+                    HistorialChat.Text = HistorialChat.Text + System.Environment.NewLine + remitente + ": " + mensaje;
+                }
+                else
+                {
+                    HistorialChat.Text = HistorialChat.Text + remitente + ": " + mensaje;
+                }
+            }));
+        }
+
+        private void BotonInicioPartida_Click(object sender, EventArgs e)
+        {
+            MensajeChatAEnviar.Text = "";
+
+            //Enviamos un mensaje al servidor para indicar de que empezamos la partida
+            string mensaje = "7/EMPEZAR/" + JugadorContrincante;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+
+            //Deshabilitamos el chat y la posibilidad de enviar más mensajes puesto que se empieza la partida
+            HistorialChat.Invoke(new Action(() =>
+            {
+                HistorialChat.Enabled = false;
+            }));
+
+            MensajeChatAEnviar.Invoke(new Action(() =>
+            {
+                MensajeChatAEnviar.Enabled = false;
+            }));
+
+            BotonInicioPartida.Invoke(new Action(() =>
+            {
+                BotonInicioPartida.Enabled = false;
+            }));
+
+            //Abrimos el juego puesto que se ha decidido de empezar ya la partida
+            if (ListaVentanasJuego.Count < 0)
+            {
+                ListaVentanasJuego.Clear();
+            }
+            Juego Juego = new Juego();
+            ListaVentanasJuego.Add(Juego);
+            Juego.ShowDialog();
         }
 
         private void BotonInvitacion_Click(object sender, EventArgs e)
@@ -223,8 +344,8 @@ namespace Cliente
             if (TablaUsuariosConectados.CurrentCell.Value != null && Convert.ToString(TablaUsuariosConectados.CurrentCell.Value) != Usuario)
             {
                 //Enviamos un mensaje al servidor para solicitar una partida
-                string mensaje = "7/ENVIAR/";
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje + Convert.ToString(TablaUsuariosConectados.CurrentCell.Value));
+                string mensaje = "7/ENVIAR/" + Convert.ToString(TablaUsuariosConectados.CurrentCell.Value);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
                 //Deshabilitamos el botón para poder evitar más de una invitación a la vez

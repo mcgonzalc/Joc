@@ -441,20 +441,20 @@ void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 void CrearPartida(ListaPartidasActivas *ListaPartidasPreparadas, char Jugador1[80], char Jugador2[80])
 {
 	pthread_mutex_lock(&mutex);
-	int i;
+	int NumeroDePartida = 0;
 	
 	//Buscamos un hueco para poner una partida en nuestra tabla de partidas
-	while (ListaPartidasPreparadas->PartidasActivas[i].NumeroPartida != -1)
+	while (ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].NumeroPartida != -1)
 	{
-		i++;
+		NumeroDePartida++;
 	}
 	
 	//Inicializamos la partida con los nombres de los jugadores y reinicializamos el marcador
-	ListaPartidasPreparadas->PartidasActivas[i].NumeroPartida = i;
-	strcpy(ListaPartidasPreparadas->PartidasActivas[i].Jugador1, Jugador1);
-	strcpy(ListaPartidasPreparadas->PartidasActivas[i].Jugador2, Jugador2);
-	ListaPartidasPreparadas->PartidasActivas[i].PuntosJugador1 = 0;
-	ListaPartidasPreparadas->PartidasActivas[i].PuntosJugador2 = 0;
+	ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].NumeroPartida = NumeroDePartida;
+	strcpy(ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].Jugador1, Jugador1);
+	strcpy(ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].Jugador2, Jugador2);
+	ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].PuntosJugador1 = 0;
+	ListaPartidasPreparadas->PartidasActivas[NumeroDePartida].PuntosJugador2 = 0;
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -472,6 +472,7 @@ void *AtenderCliente (void *socket)
 	
 	char Usuario[80];
 	char UsuarioContrincante[80];
+	char UsuarioConsultado[80];
 	
 	int terminar = 0;
 	// Entramos en un bucle para atender todas las peticiones de este cliente
@@ -596,15 +597,15 @@ void *AtenderCliente (void *socket)
 		case 3: //Piden calcular los puntos que ha obtenido un jugador en todas las partidas
 		{
 			p = strtok(NULL, "/");
-			strcpy (Usuario, p); // Ya tenemos el usuario
+			strcpy (UsuarioConsultado, p); // Ya tenemos el usuario
 			
-			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, Usuario);
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, UsuarioConsultado);
 			
 			strcpy (ConsultaResultante,"SELECT Participacion.Puntos FROM Participacion,Jugador WHERE Jugador.Nombre = '");
-			strcat (ConsultaResultante, Usuario);
+			strcat (ConsultaResultante, UsuarioConsultado);
 			strcat (ConsultaResultante,"' AND Jugador.Identificador = Participacion.Jugador");
 			
-			ObtenerPuntuacionJugador(conn, Usuario, Respuesta);
+			ObtenerPuntuacionJugador(conn, UsuarioConsultado, Respuesta);
 			printf ("Respuesta: %s\n", Respuesta);
 			write (sock_conn, Respuesta, strlen(Respuesta));
 		}
@@ -612,7 +613,6 @@ void *AtenderCliente (void *socket)
 		
 		case 4: //Consulta para el numero total de partidas ganadas por un jugador
 		{
-			char UsuarioConsultado[80];
 			p = strtok(NULL, "/");
 			strcpy (UsuarioConsultado, p); // Ya tenemos el usuario
 			
@@ -632,7 +632,6 @@ void *AtenderCliente (void *socket)
 		
 		case 5: //Consulta para el numero total de partidas jugadas por un jugador
 		{
-			char UsuarioConsultado[80];
 			p = strtok(NULL, "/");
 			strcpy (UsuarioConsultado, p); // Ya tenemos el usuario
 			
@@ -685,6 +684,32 @@ void *AtenderCliente (void *socket)
 				sprintf(Respuesta, "7/RECHAZADO/%s", Usuario);
 				write(SocketContrincante, Respuesta, strlen(Respuesta));
 			}
+			
+			else if (strcmp(Gestion, "EMPEZAR") == 0) //El usuario quiere empezar el duelo creado
+			{
+				sprintf(Respuesta, "7/EMPEZAR/%s", Usuario);
+				write(SocketContrincante, Respuesta, strlen(Respuesta));
+			}
+		}
+		break;
+		
+		case 8: //Peticion para enviar un mensaje por el chat
+		{
+			char UsuarioContrincante[80];
+			p = strtok(NULL, "/");
+			strcpy (UsuarioContrincante, p); // Ya tenemos el usuario para enviar el mensaje
+			
+			printf ("Codigo: %d, Nombre: %s\n", CodigoConsulta, UsuarioContrincante);
+			
+			p = strtok(NULL, "/");
+			char MensajeAEnviar[900];
+			strcpy (MensajeAEnviar, p); // Ya tenemos el mensaje para enviar por el chat
+			
+			int SocketContrincante = BuscarSocketJugador(&ListaUsuariosConectados, UsuarioContrincante);
+			
+			sprintf(Respuesta, "8/%s/%s", Usuario, MensajeAEnviar);
+			printf ("Respuesta: %s\n", Respuesta);
+			write (SocketContrincante, Respuesta, strlen(Respuesta));
 		}
 		break;
 		}
@@ -724,6 +749,12 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < 100; i++)
 	{
 		sockets[i] = -1;
+	}
+	
+	//Ponemos todos las partidas activas con valor -1 para indicar que sus identificadores estan libres
+	for (int i = 0; i < 50; i++)
+	{
+		ListaPartidasPreparadas.PartidasActivas[i].NumeroPartida = -1;
 	}
 	
 	pthread_t thread;
