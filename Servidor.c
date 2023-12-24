@@ -715,7 +715,15 @@ void *AtenderCliente (void *socket)
 		}
 	}
 	mysql_close (conn);
-	sockets[sock_conn] = -1;
+	
+	//Indicamos que el socket utilizado para este thread se libera
+	for(int i = 0; i < 100; i++)
+	{
+		if (sockets[i] == sock_conn)
+		{
+			sockets[i] = -1;
+		}
+	}
 	SocketsOcupados = SocketsOcupados - 1;
 	close(sock_conn);
 }
@@ -728,9 +736,9 @@ int main(int argc, char *argv[])
 	//Abrimos el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		printf("Error creando el socket\n");
+	
+	
 	//Hacemos bind al puerto
-	
-	
 	memset(&serv_adr, 0, sizeof(serv_adr)); //Inicializa a cero serv_addr
 	serv_adr.sin_family = AF_INET;
 	
