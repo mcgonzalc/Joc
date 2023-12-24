@@ -240,9 +240,10 @@ namespace Cliente
                 {
                     ListaVentanasJuego.Clear();
                 }
-                Juego Juego = new Juego();
-                ListaVentanasJuego.Add(Juego);
-                Juego.ShowDialog();
+                    Juego Juego = new Juego();
+                    ListaVentanasJuego.Add(Juego);
+                    Juego.ShowDialog();
+                
             }
         }
         
@@ -333,9 +334,10 @@ namespace Cliente
             {
                 ListaVentanasJuego.Clear();
             }
-            Juego Juego = new Juego();
-            ListaVentanasJuego.Add(Juego);
-            Juego.ShowDialog();
+                Juego Juego = new Juego();
+                ListaVentanasJuego.Add(Juego);
+                Juego.ShowDialog();
+            
         }
 
         private void BotonInvitacion_Click(object sender, EventArgs e)

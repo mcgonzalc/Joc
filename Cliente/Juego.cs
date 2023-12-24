@@ -23,7 +23,7 @@ namespace Cliente
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
        
 
-        private void Juego_KeyPress(object sender, KeyPressEventArgs e)
+        private void Juego_KeyPress(object sender, KeyPressEventArgs e) // Movimineto si dejas pulsada la tecla
         {
             int x = Jugador1.Location.X;
             int y = Jugador1.Location.Y;
@@ -43,14 +43,14 @@ namespace Cliente
             {
                 x = 450;
             }
-            Point movimiento = new Point(x, y);
+            Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
             Jugador1.Location = movimiento;
          
 
         }
 
 
-        private void Juego_KeyDown(object sender, KeyEventArgs e)
+        private void Juego_KeyDown(object sender, KeyEventArgs e) // Moviento al pulsar la tecla
         {
           
 
@@ -77,13 +77,13 @@ namespace Cliente
                 TimerSalto.Stop();
                 enSalto = false;
                 velocidadSalto = Math.Abs(velocidadSalto);
-                Point salto = new Point(x, sueloY);
+                Jugador1.Location = new Point(x, sueloY);
             }
         }
 
         private void Juego_Load(object sender, EventArgs e)
         {
-            sueloY = 237;
+            sueloY = 165;  // Posicion Y del juador - altura de la imagen del jugador: 237-72
         }
     }
 }
