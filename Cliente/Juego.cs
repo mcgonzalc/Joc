@@ -89,12 +89,22 @@ namespace Cliente
         {
             sueloY = 165;  // Posicion Y del juador - altura de la imagen del jugador: 237-72
         }
+        
+        private bool ColsionConJugador1 ( PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
+        {
+            Rectangle rect1 = new Rectangle(pb1.Location, pb1.Size);
+            Rectangle rect2 = new Rectangle(pb2.Location, pb2.Size);
 
+            return rect1.IntersectsWith(rect2);
+        }
         private void TimerPelota_Tick(object sender, EventArgs e)
         {
-            MoverPelota(); // Mueve la pelota
-            // Verifica colisiones y realiza el rebote si es necesario
-            VerificarColisiones();
+            if ((ColsionConJugador1(Jugador1, pelota)== true))
+            {
+                MoverPelota(); // Mueve la pelota
+                               // Verifica colisiones y realiza el rebote si es necesario
+                VerificarColisiones();
+            }
         }
         private void MoverPelota()
         {
