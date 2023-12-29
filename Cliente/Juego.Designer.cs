@@ -45,10 +45,9 @@ namespace Cliente
             // 
             this.Jugador1.BackColor = System.Drawing.Color.Transparent;
             this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.Jugador1.Location = new System.Drawing.Point(629, 240);
-            this.Jugador1.Margin = new System.Windows.Forms.Padding(2);
+            this.Jugador1.Location = new System.Drawing.Point(1016, 352);
             this.Jugador1.Name = "Jugador1";
-            this.Jugador1.Size = new System.Drawing.Size(51, 47);
+            this.Jugador1.Size = new System.Drawing.Size(76, 72);
             this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador1.TabIndex = 0;
             this.Jugador1.TabStop = false;
@@ -57,10 +56,9 @@ namespace Cliente
             // 
             this.Jugador2.BackColor = System.Drawing.Color.Transparent;
             this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
-            this.Jugador2.Location = new System.Drawing.Point(52, 229);
-            this.Jugador2.Margin = new System.Windows.Forms.Padding(2);
+            this.Jugador2.Location = new System.Drawing.Point(12, 335);
             this.Jugador2.Name = "Jugador2";
-            this.Jugador2.Size = new System.Drawing.Size(49, 58);
+            this.Jugador2.Size = new System.Drawing.Size(74, 89);
             this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador2.TabIndex = 1;
             this.Jugador2.TabStop = false;
@@ -69,9 +67,10 @@ namespace Cliente
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(347, 240);
+            this.pelota.Location = new System.Drawing.Point(520, 369);
+            this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pelota.Name = "pelota";
-            this.pelota.Size = new System.Drawing.Size(40, 40);
+            this.pelota.Size = new System.Drawing.Size(60, 62);
             this.pelota.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pelota.TabIndex = 2;
             this.pelota.TabStop = false;
@@ -82,20 +81,20 @@ namespace Cliente
             // 
             // TimerPelota
             // 
+            this.TimerPelota.Interval = 20;
             this.TimerPelota.Tick += new System.EventHandler(this.TimerPelota_Tick);
             // 
             // Juego
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(736, 334);
+            this.ClientSize = new System.Drawing.Size(1104, 514);
             this.Controls.Add(this.pelota);
             this.Controls.Add(this.Jugador2);
             this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";

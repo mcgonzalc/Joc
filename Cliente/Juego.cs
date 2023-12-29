@@ -17,11 +17,14 @@ namespace Cliente
             
             InitializeComponent();
             this.BackgroundImageLayout = ImageLayout.Stretch;
-            TimerPelota.Start();
+            TimerPelota.Enabled= true;
+
         }
         
         private int velocidadSalto = 10;
-        private int velocidadRebote = 10;
+        private int velocidadReboteX = 10;
+        private int velocidadReboteY = 10;
+        private int gravedad = 5;
         private int alturaSalto = 100;    
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
@@ -43,9 +46,9 @@ namespace Cliente
             {
                 x = 0;
             }
-            if (x > 450)
+            if (x > 1126)
             {
-                x = 450;
+                x = 1126;
             }
             Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
             Jugador1.Location = movimiento;
@@ -89,22 +92,27 @@ namespace Cliente
         {
             sueloY = 165;  // Posicion Y del juador - altura de la imagen del jugador: 237-72
         }
-        
-        private bool ColsionConJugador1 ( PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
+
+        private bool ColisionConJugador1(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
         {
             Rectangle rect1 = new Rectangle(pb1.Location, pb1.Size);
             Rectangle rect2 = new Rectangle(pb2.Location, pb2.Size);
 
-            return rect1.IntersectsWith(rect2);
-        }
+            bool hayColision = rect1.IntersectsWith(rect2);
+            return hayColision;
+
+        } 
+        
         private void TimerPelota_Tick(object sender, EventArgs e)
         {
-            if ((ColsionConJugador1(Jugador1, pelota)== true))
-            {
                 MoverPelota(); // Mueve la pelota
                                // Verifica colisiones y realiza el rebote si es necesario
                 VerificarColisiones();
+            if (pelota.Location.Y > 100)
+            {
+                AplicarGravedad();
             }
+            
         }
         private void MoverPelota()
         {
@@ -112,7 +120,7 @@ namespace Cliente
             int y = pelota.Location.Y;
 
             // Actualiza la posición de la pelota
-            pelota.Location = new Point(x - velocidadRebote, y + velocidadRebote);
+            pelota.Location = new Point(x - velocidadReboteX, y - velocidadReboteY);
         }
 
         private void VerificarColisiones()
@@ -127,7 +135,7 @@ namespace Cliente
                 AjustarPosicionMaxY(); // Ajusta la posición de la pelota para evitar que pase el suelo
             }
 
-            // Verifica colisión con el techo (opcional)
+            // Verifica colisión con el techo 
             if (pelota.Location.Y < 0)
             {
                 RealizarRebote(true, false); // Rebote en el eje Y
@@ -141,16 +149,20 @@ namespace Cliente
             }
         }
 
+        private void AplicarGravedad()
+        {
+            velocidadReboteY += gravedad;
+        }
         private void RealizarRebote(bool enEjeY, bool enEjeX)
         {
             if (enEjeY)
             {
-                velocidadRebote = -velocidadRebote; // Invierte la dirección del rebote en el eje Y
+                velocidadReboteY = -velocidadReboteY; // Invierte la dirección del rebote en el eje Y
             }
 
             if (enEjeX)
             {
-                velocidadRebote = +velocidadRebote; // Invierte la dirección del rebote en el eje X
+                velocidadReboteX = +velocidadReboteX; // Invierte la dirección del rebote en el eje X
             }
         }
 
