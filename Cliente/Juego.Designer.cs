@@ -51,9 +51,10 @@ namespace Cliente
             // 
             this.Jugador1.BackColor = System.Drawing.Color.Transparent;
             this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.Jugador1.Location = new System.Drawing.Point(975, 352);
+            this.Jugador1.Location = new System.Drawing.Point(632, 240);
+            this.Jugador1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Jugador1.Name = "Jugador1";
-            this.Jugador1.Size = new System.Drawing.Size(76, 72);
+            this.Jugador1.Size = new System.Drawing.Size(51, 47);
             this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador1.TabIndex = 0;
             this.Jugador1.TabStop = false;
@@ -62,9 +63,10 @@ namespace Cliente
             // 
             this.Jugador2.BackColor = System.Drawing.Color.Transparent;
             this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
-            this.Jugador2.Location = new System.Drawing.Point(66, 352);
+            this.Jugador2.Location = new System.Drawing.Point(100, 240);
+            this.Jugador2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Jugador2.Name = "Jugador2";
-            this.Jugador2.Size = new System.Drawing.Size(76, 72);
+            this.Jugador2.Size = new System.Drawing.Size(51, 47);
             this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador2.TabIndex = 1;
             this.Jugador2.TabStop = false;
@@ -73,10 +75,9 @@ namespace Cliente
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(520, 369);
-            this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pelota.Location = new System.Drawing.Point(348, 247);
             this.pelota.Name = "pelota";
-            this.pelota.Size = new System.Drawing.Size(60, 62);
+            this.pelota.Size = new System.Drawing.Size(40, 40);
             this.pelota.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pelota.TabIndex = 2;
             this.pelota.TabStop = false;
@@ -92,8 +93,9 @@ namespace Cliente
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(100, 50);
+            this.pictureBox1.Size = new System.Drawing.Size(67, 32);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
@@ -101,27 +103,29 @@ namespace Cliente
             // 
             this.porteria2.BackColor = System.Drawing.Color.Transparent;
             this.porteria2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.porteria2.Location = new System.Drawing.Point(1057, 259);
+            this.porteria2.Location = new System.Drawing.Point(707, 180);
+            this.porteria2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.porteria2.Name = "porteria2";
-            this.porteria2.Size = new System.Drawing.Size(46, 165);
+            this.porteria2.Size = new System.Drawing.Size(31, 107);
             this.porteria2.TabIndex = 4;
             this.porteria2.TabStop = false;
             // 
             // porteria
             // 
             this.porteria.BackColor = System.Drawing.Color.Transparent;
-            this.porteria.Location = new System.Drawing.Point(0, 259);
+            this.porteria.Location = new System.Drawing.Point(0, 180);
+            this.porteria.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.porteria.Name = "porteria";
-            this.porteria.Size = new System.Drawing.Size(44, 165);
+            this.porteria.Size = new System.Drawing.Size(29, 107);
             this.porteria.TabIndex = 5;
             this.porteria.TabStop = false;
             // 
             // Juego
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(1104, 514);
+            this.ClientSize = new System.Drawing.Size(736, 381);
             this.Controls.Add(this.porteria);
             this.Controls.Add(this.porteria2);
             this.Controls.Add(this.pictureBox1);
@@ -130,6 +134,7 @@ namespace Cliente
             this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";

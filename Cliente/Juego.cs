@@ -24,7 +24,9 @@ namespace Cliente
         private int velocidadSalto = 10;
         private int velocidadReboteX = 5;
         private int velocidadReboteY = 5;
+        private int velocidadX = 5;
         private int gravedad = 3;
+        private double friccion = 0.95;
         private int alturaSalto = 100;    
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
@@ -143,7 +145,7 @@ namespace Cliente
 
             MoverPelota(); // Mueve la pelota           
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
-
+            AplicarFriccion(); // Frena el movimiento en X en cada rebote.
             if (pelota.Location.Y > 100)
             {
                 AplicarGravedad();
@@ -184,10 +186,10 @@ namespace Cliente
         private void VerificarColisiones()
         {
             int maxX = ClientSize.Width - pelota.Width;
-            int maxY = ClientSize.Height - pelota.Height;
+           // int maxY = ClientSize.Height - pelota.Height; //250 es el suelo 
             
             // Verifica colisión con el suelo
-            if (pelota.Location.Y > maxY)
+            if (pelota.Location.Y > 250)
             {
                 RealizarRebote(true, false); // Rebote en el eje Y
                 AjustarPosicionMaxY(); // Ajusta la posición de la pelota para evitar que pase el suelo
@@ -216,7 +218,17 @@ namespace Cliente
 
         private void AplicarGravedad()
         {
-            velocidadReboteY += gravedad;
+            velocidadReboteY -= gravedad;
+        }
+        private void AplicarFriccion()
+        {
+            pelota.Left += velocidadX;
+            velocidadX *= Convert.ToInt32(friccion);
+            if (Math.Abs(velocidadX) < 0.1)
+            {
+                velocidadX = 0;
+                TimerPelota.Stop();  // Opcional: detener el temporizador cuando el movimiento se detiene
+            }
         }
         private void RealizarRebote(bool enEjeY, bool enEjeX)
         {
@@ -233,7 +245,7 @@ namespace Cliente
 
         private void AjustarPosicionMaxY()
         {
-            pelota.Location = new Point(pelota.Location.X, ClientSize.Height - pelota.Height);
+            pelota.Location = new Point(pelota.Location.X, 250);
         }
 
         private void AjustarPosicionMinY()
