@@ -22,9 +22,9 @@ namespace Cliente
         }
         
         private int velocidadSalto = 10;
-        private int velocidadReboteX = 10;
-        private int velocidadReboteY = 10;
-        private int gravedad = 5;
+        private int velocidadReboteX = 5;
+        private int velocidadReboteY = 5;
+        private int gravedad = 3;
         private int alturaSalto = 100;    
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
@@ -42,13 +42,13 @@ namespace Cliente
             {
                 x -= 10;
             }
-            if (x <0)
+            if (x <66)
             {
-                x = 0;
+                x = 66;
             }
-            if (x > 1126)
+            if (x > 975-76)
             {
-                x = 1126;
+                x = 975-76;
             }
             Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
             Jugador1.Location = movimiento;
@@ -91,12 +91,30 @@ namespace Cliente
 
         private void Juego_Load(object sender, EventArgs e)
         {
-            sueloY = 165;  // Posicion Y del juador - altura de la imagen del jugador: 237-72
+            sueloY = 280;  // Posicion Y del juador - altura de la imagen del jugador: 352-72
             MoverPelota(); // Mueve la pelota           
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
             ColisionConJugador1(pelota, Jugador1);
+            ColisionConJugador2(pelota, Jugador2);
+            
         }
+        
+        private bool Gol( PictureBox pb1, PictureBox pb2, PictureBox pb3) // Checkea si hay colision entre la porteria y la pelota
+        {
+            Rectangle rec1 = new Rectangle(pb1.Location , pb1.Size);
+            Rectangle rec2 = new Rectangle(pb2.Location, pb2.Size);
+            Rectangle rec3 = new Rectangle(pb3.Location, pb3.Size);
+            bool HayGol = rec1.IntersectsWith(rec2); 
+            bool HayGol2 = rec1.IntersectsWith(rec3);
+            if (HayGol || HayGol2)
+            {
+                return true;
+            }
+            else
+                return false;
+            
 
+        }
         private bool ColisionConJugador1(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
         {
             TimerPelota.Enabled = true;
@@ -107,8 +125,19 @@ namespace Cliente
             bool hayColision = rect1.IntersectsWith(rect2);
             return hayColision;
 
-        } 
-        
+        }
+        private bool ColisionConJugador2(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador2 y la pelota 
+        {
+            TimerPelota.Enabled = true;
+            TimerPelota.Start();
+            Rectangle rect1 = new Rectangle(pb1.Location, pb1.Size);
+            Rectangle rect2 = new Rectangle(pb2.Location, pb2.Size);
+
+            bool hayColision = rect1.IntersectsWith(rect2);
+            return hayColision;
+
+        }
+
         private void TimerPelota_Tick(object sender, EventArgs e)
         {
 
@@ -128,6 +157,19 @@ namespace Cliente
                 velocidadReboteX = -velocidadReboteX; // Cambia la dirección en el eje X
                 RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
             }
+            // Verifica la colisión con el jugador1
+            if (ColisionConJugador2(Jugador2, pelota))
+            {
+                // Realiza alguna acción en caso de colisión con el jugador2
+                // Por ejemplo, cambiar la dirección de la pelota o ajustar su posición
+                velocidadReboteX = -velocidadReboteX; // Cambia la dirección en el eje X
+                RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
+            }
+            if (Gol(pelota, porteria, porteria2) == true)
+            {
+                pelota.Location = new Point(520, 369); // Si hay gol cambiamos la posicion a la inicial
+            }
+
         }
         private void MoverPelota()
         {
@@ -136,6 +178,7 @@ namespace Cliente
             
             // Actualiza la posición de la pelota
             pelota.Location = new Point(x - velocidadReboteX, y - velocidadReboteY);
+            
         }
 
         private void VerificarColisiones()
