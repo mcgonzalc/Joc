@@ -22,11 +22,9 @@ namespace Cliente
         }
         
         private int velocidadSalto = 10;
-        private int velocidadReboteX = 5;
-        private int velocidadReboteY = 5;
-        private int velocidadX = 5;
+        private int velocidadReboteX = 10;
+        private int velocidadReboteY = 20;
         private int gravedad = 3;
-        private double friccion = 0.95;
         private int alturaSalto = 100;    
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
@@ -93,7 +91,7 @@ namespace Cliente
 
         private void Juego_Load(object sender, EventArgs e)
         {
-            sueloY = 280;  // Posicion Y del juador - altura de la imagen del jugador: 352-72
+            sueloY = 250;  // Posicion Y del juador - altura de la imagen del jugador: 352-72
             MoverPelota(); // Mueve la pelota           
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
             ColisionConJugador1(pelota, Jugador1);
@@ -145,10 +143,14 @@ namespace Cliente
 
             MoverPelota(); // Mueve la pelota           
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
-            AplicarFriccion(); // Frena el movimiento en X en cada rebote.
+           
             if (pelota.Location.Y > 100)
             {
                 AplicarGravedad();
+                if (pelota.Location.Y == 250)
+                {
+                    InvertirGravedad();
+                }
             }
 
             // Verifica la colisión con el jugador1
@@ -160,7 +162,7 @@ namespace Cliente
                 RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
             }
             // Verifica la colisión con el jugador1
-            if (ColisionConJugador2(Jugador2, pelota))
+           if (ColisionConJugador2(Jugador2, pelota))
             {
                 // Realiza alguna acción en caso de colisión con el jugador2
                 // Por ejemplo, cambiar la dirección de la pelota o ajustar su posición
@@ -169,7 +171,7 @@ namespace Cliente
             }
             if (Gol(pelota, porteria, porteria2) == true)
             {
-                pelota.Location = new Point(520, 369); // Si hay gol cambiamos la posicion a la inicial
+                pelota.Location = new Point(400, 250); // Si hay gol cambiamos la posicion a la inicial
             }
 
         }
@@ -196,7 +198,7 @@ namespace Cliente
             }
 
             // Verifica colisión con el techo 
-            if (pelota.Location.Y < 0)
+            if (pelota.Location.Y < 70)
             {
                 RealizarRebote(true, false); // Rebote en el eje Y
                 AjustarPosicionMinY(); // Ajusta la posición de la pelota para evitar que pase el techo
@@ -208,28 +210,18 @@ namespace Cliente
                 RealizarRebote(false, true); // Rebote en el eje X
             }
             //Verifica colisión con los jugadores
-            if(pelota.Location.X == Jugador1.Location.X || pelota.Location.Y == Jugador1.Location.Y)
-            {
-                pelota.Location = new Point(pelota.Location.X, pelota.Location.Y);
-                RealizarRebote(true, true);
-                MoverPelota();
-            }
+           
         }
 
         private void AplicarGravedad()
         {
             velocidadReboteY -= gravedad;
         }
-        private void AplicarFriccion()
+        private void InvertirGravedad()
         {
-            pelota.Left += velocidadX;
-            velocidadX *= Convert.ToInt32(friccion);
-            if (Math.Abs(velocidadX) < 0.1)
-            {
-                velocidadX = 0;
-                TimerPelota.Stop();  // Opcional: detener el temporizador cuando el movimiento se detiene
-            }
+            velocidadReboteY += gravedad;
         }
+        
         private void RealizarRebote(bool enEjeY, bool enEjeX)
         {
             if (enEjeY)
@@ -250,7 +242,7 @@ namespace Cliente
 
         private void AjustarPosicionMinY()
         {
-            pelota.Location = new Point(pelota.Location.X, 0);
+            pelota.Location = new Point(pelota.Location.X, 70);
         }
     }
 }
