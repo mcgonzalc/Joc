@@ -240,7 +240,7 @@ namespace Cliente
                 {
                     ListaVentanasJuego.Clear();
                 }
-                    Juego Juego = new Juego();
+                    Juego Juego = new Juego(false); // abrimos como jugador visitante
                     ListaVentanasJuego.Add(Juego);
                     Juego.ShowDialog();
                 
@@ -334,7 +334,7 @@ namespace Cliente
             {
                 ListaVentanasJuego.Clear();
             }
-                Juego Juego = new Juego();
+                Juego Juego = new Juego(true); // abrimos como jugador local
                 ListaVentanasJuego.Add(Juego);
                 Juego.ShowDialog();
             

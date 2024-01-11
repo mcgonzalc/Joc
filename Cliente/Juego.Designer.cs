@@ -53,10 +53,9 @@ namespace Cliente
             // 
             this.Jugador1.BackColor = System.Drawing.Color.Transparent;
             this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.Jugador1.Location = new System.Drawing.Point(632, 240);
-            this.Jugador1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Jugador1.Location = new System.Drawing.Point(948, 369);
             this.Jugador1.Name = "Jugador1";
-            this.Jugador1.Size = new System.Drawing.Size(51, 47);
+            this.Jugador1.Size = new System.Drawing.Size(76, 72);
             this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador1.TabIndex = 0;
             this.Jugador1.TabStop = false;
@@ -65,10 +64,9 @@ namespace Cliente
             // 
             this.Jugador2.BackColor = System.Drawing.Color.Transparent;
             this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
-            this.Jugador2.Location = new System.Drawing.Point(100, 240);
-            this.Jugador2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Jugador2.Location = new System.Drawing.Point(150, 369);
             this.Jugador2.Name = "Jugador2";
-            this.Jugador2.Size = new System.Drawing.Size(51, 47);
+            this.Jugador2.Size = new System.Drawing.Size(76, 72);
             this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador2.TabIndex = 1;
             this.Jugador2.TabStop = false;
@@ -77,9 +75,10 @@ namespace Cliente
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(348, 247);
+            this.pelota.Location = new System.Drawing.Point(522, 380);
+            this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pelota.Name = "pelota";
-            this.pelota.Size = new System.Drawing.Size(40, 40);
+            this.pelota.Size = new System.Drawing.Size(60, 62);
             this.pelota.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pelota.TabIndex = 2;
             this.pelota.TabStop = false;
@@ -96,20 +95,18 @@ namespace Cliente
             // 
             this.porteria2.BackColor = System.Drawing.Color.Transparent;
             this.porteria2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.porteria2.Location = new System.Drawing.Point(707, 164);
-            this.porteria2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.porteria2.Location = new System.Drawing.Point(1060, 252);
             this.porteria2.Name = "porteria2";
-            this.porteria2.Size = new System.Drawing.Size(31, 123);
+            this.porteria2.Size = new System.Drawing.Size(46, 189);
             this.porteria2.TabIndex = 4;
             this.porteria2.TabStop = false;
             // 
             // porteria
             // 
             this.porteria.BackColor = System.Drawing.Color.Transparent;
-            this.porteria.Location = new System.Drawing.Point(0, 164);
-            this.porteria.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.porteria.Location = new System.Drawing.Point(0, 252);
             this.porteria.Name = "porteria";
-            this.porteria.Size = new System.Drawing.Size(29, 123);
+            this.porteria.Size = new System.Drawing.Size(44, 189);
             this.porteria.TabIndex = 5;
             this.porteria.TabStop = false;
             // 
@@ -119,13 +116,12 @@ namespace Cliente
             this.Local.BackColor = System.Drawing.Color.Transparent;
             this.Local.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Local.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.Local.Location = new System.Drawing.Point(257, 45);
-            this.Local.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.Local.MinimumSize = new System.Drawing.Size(33, 32);
+            this.Local.Location = new System.Drawing.Point(386, 69);
+            this.Local.MinimumSize = new System.Drawing.Size(50, 49);
             this.Local.Name = "Local";
-            this.Local.Size = new System.Drawing.Size(91, 32);
+            this.Local.Size = new System.Drawing.Size(134, 49);
             this.Local.TabIndex = 6;
-            this.Local.Text = "marcador V";
+            this.Local.Text = "marcador L";
             // 
             // Visitante
             // 
@@ -133,14 +129,12 @@ namespace Cliente
             this.Visitante.BackColor = System.Drawing.Color.Transparent;
             this.Visitante.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Visitante.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.Visitante.Location = new System.Drawing.Point(430, 45);
-            this.Visitante.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.Visitante.MinimumSize = new System.Drawing.Size(33, 32);
+            this.Visitante.Location = new System.Drawing.Point(645, 69);
+            this.Visitante.MinimumSize = new System.Drawing.Size(50, 49);
             this.Visitante.Name = "Visitante";
-            this.Visitante.Size = new System.Drawing.Size(89, 32);
+            this.Visitante.Size = new System.Drawing.Size(136, 49);
             this.Visitante.TabIndex = 7;
-            this.Visitante.Text = "marcador L";
-            this.Visitante.Click += new System.EventHandler(this.Visitante_Click);
+            this.Visitante.Text = "marcador V";
             // 
             // TimerPartida
             // 
@@ -154,18 +148,19 @@ namespace Cliente
             this.Duracion.BackColor = System.Drawing.Color.Transparent;
             this.Duracion.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Duracion.ForeColor = System.Drawing.Color.Transparent;
-            this.Duracion.Location = new System.Drawing.Point(345, 26);
+            this.Duracion.Location = new System.Drawing.Point(518, 40);
+            this.Duracion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Duracion.Name = "Duracion";
-            this.Duracion.Size = new System.Drawing.Size(57, 20);
+            this.Duracion.Size = new System.Drawing.Size(87, 29);
             this.Duracion.TabIndex = 8;
             this.Duracion.Text = "tiempo";
             // 
             // Juego
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(736, 381);
+            this.ClientSize = new System.Drawing.Size(1104, 586);
             this.Controls.Add(this.Duracion);
             this.Controls.Add(this.Visitante);
             this.Controls.Add(this.Local);
@@ -176,7 +171,6 @@ namespace Cliente
             this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";

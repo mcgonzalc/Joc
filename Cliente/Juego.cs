@@ -12,12 +12,14 @@ namespace Cliente
 {
     public partial class Juego : Form
     {
-        public Juego()
+        bool JugadorLocal;
+        public Juego(bool JugadorLocal)
         {
             
             InitializeComponent();
             this.BackgroundImageLayout = ImageLayout.Stretch;
-            Jugador1.Enabled = true;
+            this.JugadorLocal = JugadorLocal;
+           
         }
         
         private int velocidadSalto = 10;
@@ -33,27 +35,54 @@ namespace Cliente
 
         private void Juego_KeyPress(object sender, KeyPressEventArgs e) // Movimineto si dejas pulsada la tecla
         {
-            int x = Jugador1.Location.X;
-            int y = Jugador1.Location.Y;
-            if (e.KeyChar=='D'||e.KeyChar=='d')
+            if (JugadorLocal == true)
             {
-                x += 10;
-            }
-            if (e.KeyChar == 'A' || e.KeyChar == 'a')
-            {
-                x -= 10;
-            }
-            if (x <66)
-            {
-                x = 66;
-            }
-            if (x > 975-76)
-            {
-                x = 975-76;
-            }
-            Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
-            Jugador1.Location = movimiento;
 
+
+                int x = Jugador2.Location.X;
+                int y = Jugador2.Location.Y;
+                if (e.KeyChar == 'D' || e.KeyChar == 'd')
+                {
+                    x += 10;
+                }
+                if (e.KeyChar == 'A' || e.KeyChar == 'a')
+                {
+                    x -= 10;
+                }
+                if (x < 66)
+                {
+                    x = 66;
+                }
+                if (x > 975 - 76)
+                {
+                    x = 975 - 76;
+                }
+                Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
+                Jugador2.Location = movimiento;
+            }
+            if (JugadorLocal == false)
+            {
+                int x = Jugador1.Location.X;
+                int y = Jugador1.Location.Y;
+                if (e.KeyChar == 'D' || e.KeyChar == 'd')
+                {
+                    x += 10;
+                }
+                if (e.KeyChar == 'A' || e.KeyChar == 'a')
+                {
+                    x -= 10;
+                }
+                if (x < 66)
+                {
+                    x = 66;
+                }
+                if (x > 975 - 76)
+                {
+                    x = 975 - 76;
+                }
+                Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
+                Jugador1.Location = movimiento;
+            }
         }
 
 
@@ -72,22 +101,43 @@ namespace Cliente
        
         private void Temporizador_Tick(object sender, EventArgs e) //salto
         {
-            
-            Jugador1.Top -= velocidadSalto;
-            int x = Jugador1.Location.X;
-            if ( Jugador1.Top < sueloY - alturaSalto)
+            if (JugadorLocal == true)
             {
-                velocidadSalto = -velocidadSalto;
+
+                Jugador2.Top -= velocidadSalto;
+                int x = Jugador1.Location.X;
+                if (Jugador2.Top < sueloY - alturaSalto)
+                {
+                    velocidadSalto = -velocidadSalto;
+                }
+
+                if (Jugador2.Location.Y > sueloY)
+                {
+                    TimerSalto.Stop();
+                    enSalto = false;
+                    velocidadSalto = Math.Abs(velocidadSalto);
+                    Jugador2.Location = new Point(x, sueloY);
+                }
             }
 
-            if (Jugador1.Location.Y> sueloY)
+            if (JugadorLocal == false)
             {
-                TimerSalto.Stop();
-                enSalto = false;
-                velocidadSalto = Math.Abs(velocidadSalto);
-                Jugador1.Location = new Point(x, sueloY);
+
+                Jugador1.Top -= velocidadSalto;
+                int x = Jugador1.Location.X;
+                if (Jugador1.Top < sueloY - alturaSalto)
+                {
+                    velocidadSalto = -velocidadSalto;
+                }
+
+                if (Jugador1.Location.Y > sueloY)
+                {
+                    TimerSalto.Stop();
+                    enSalto = false;
+                    velocidadSalto = Math.Abs(velocidadSalto);
+                    Jugador1.Location = new Point(x, sueloY);
+                }
             }
-            
         }
 
         private void Juego_Load(object sender, EventArgs e)
@@ -275,11 +325,6 @@ namespace Cliente
                 TimerSalto.Stop();
                 Close();
             }
-        }
-
-        private void Visitante_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
