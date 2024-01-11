@@ -28,7 +28,8 @@ namespace Cliente
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
         private int MarcadorLocal = 0;
-        private int MarcadorVisitante = 0; 
+        private int MarcadorVisitante = 0;
+        private int iniciopartida = 0;
 
         private void Juego_KeyPress(object sender, KeyPressEventArgs e) // Movimineto si dejas pulsada la tecla
         {
@@ -261,6 +262,24 @@ namespace Cliente
         private void AjustarPosicionMinY()
         {
             pelota.Location = new Point(pelota.Location.X, 70);
+        }
+
+        private void TimerPartida_Tick(object sender, EventArgs e)
+        {
+            iniciopartida++;
+            Duracion.Text = Convert.ToString(iniciopartida);
+            if (iniciopartida == 120)
+            {
+                MessageBox.Show("La partida se ha acabado, el ganador es:");
+                TimerPartida.Stop();
+                TimerSalto.Stop();
+                Close();
+            }
+        }
+
+        private void Visitante_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
