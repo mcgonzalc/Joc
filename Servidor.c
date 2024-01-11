@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <mysql.h>
+#include <time.h>
 //#include <my_global.h> //Libreria especifica para produccion
 
 //Estructuras para los usuarios conectados
@@ -458,6 +459,95 @@ void CrearPartida(ListaPartidasActivas *ListaPartidasPreparadas, char Jugador1[8
 	pthread_mutex_unlock(&mutex);
 }
 
+void ObtenerFechaActual(char Respuesta[200])
+{
+	time_t now;
+	time(&now);
+	struct tm *local = localtime(&now);
+	
+	int Horas = local->tm_hour;         // get hours since midnight (0-23)
+    int Minutos = local->tm_min;        // get minutes passed after the hour (0-59)
+ 
+    int Dia = local->tm_mday;            // get day of month (1 to 31)
+    int Mes = local->tm_mon + 1;      // get month of year (0 to 11)
+    int Ano = local->tm_year + 1900;   // get year since 1900
+	
+	printf("La fecha guardada para esta partida es: %d/%d/%d %d:%d\n", Dia, Mes, Ano, Horas, Minutos); //Si no funciona, revisar: https://www.techiedelight.com/print-current-date-and-time-in-c/
+	sprintf(Respuesta, "%d/%d/%d %d:%d", Dia, Mes, Ano, Horas, Minutos);
+}
+	
+	
+void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[80], int Puntos2) //WIP
+{
+	//Obtenemos el numero total de partidas guardadas en la base de datos
+	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	int NumeroPartida = ResultadoConsulta + 1;
+	
+	//Primero determinamos cual ha sido el ganador de la partida
+	char Ganador[80];
+	if (Puntos1 > Puntos2)
+	{
+		sprintf(Ganador, "%s", Jugador1);
+	}
+	else if (Puntos1 < Puntos2)
+	{
+		sprintf(Ganador, "%s", Jugador2);
+	}
+	
+	//Que poner en caso de haber un empate
+	else
+	{
+		sprintf(Ganador, "Empate");
+	}
+	
+	//Obtenemos la fecha del sistema a la hora de guardar la partida
+	char FechaActual[200];
+	ObtenerFechaActual(FechaActual);
+	
+	//Pasamos la nueva partida a la base de datos
+	sprintf(ConsultaResultante, "INSERT INTO Partida VALUES(%d,'%s',120,'%s')", NumeroPartida, FechaActual, Ganador);
+	mysql_query (conn, ConsultaResultante);
+	
+	//Pasamos los resultados individuales de cada jugador de la partida
+	//Primero obtenemos el valor del jugador a insertar
+	strcpy (ConsultaResultante,"SELECT Jugador.Identificador FROM Jugador WHERE Jugador.Nombre = '");
+	strcat (ConsultaResultante, Jugador1);
+	strcat (ConsultaResultante, "'");
+	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	
+	//Recogemos el resultado de la consulta en una
+	//tabla virtual MySQL
+	resultado = mysql_store_result (conn);
+	
+	//Recogemos el resultado de la primera fila
+	row = mysql_fetch_row (resultado);
+	
+	int Identificador = atoi(row[0]);
+	
+	//Guardamos el resultado del primero jugador en la base de datos
+	sprintf(ConsultaResultante, "INSERT INTO Participacion VALUES(%d,%d,%d)", Identificador, NumeroPartida, Puntos1);
+	mysql_query (conn, ConsultaResultante);
+	
+	//Ahora repetimos el mismo proceso para el otro jugador
+	strcpy (ConsultaResultante,"SELECT Jugador.Identificador FROM Jugador WHERE Jugador.Nombre = '");
+	strcat (ConsultaResultante, Jugador2);
+	strcat (ConsultaResultante, "'");
+	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	
+	//Recogemos el resultado de la consulta en una
+	//tabla virtual MySQL
+	resultado = mysql_store_result (conn);
+	
+	//Recogemos el resultado de la primera fila
+	row = mysql_fetch_row (resultado);
+	
+	Identificador = atoi(row[0]);
+	
+	//Guardamos el resultado del primero jugador en la base de datos
+	sprintf(ConsultaResultante, "INSERT INTO Participacion VALUES(%d,%d,%d)", Identificador, NumeroPartida, Puntos2);
+	mysql_query (conn, ConsultaResultante);
+}
+	
 void *AtenderCliente (void *socket)
 {
 	int sock_conn;
@@ -710,6 +800,37 @@ void *AtenderCliente (void *socket)
 			sprintf(Respuesta, "8/%s/%s", Usuario, MensajeAEnviar);
 			printf ("Respuesta: %s\n", Respuesta);
 			write (SocketContrincante, Respuesta, strlen(Respuesta));
+		}
+		break;
+		
+		case 9: //Peticion para guardar los datos de la partida
+		{
+			p = strtok(NULL, "/");
+			int PuntosLocal = atoi (p); //Obtenemos los puntos del jugador local
+			p = strtok(NULL, "/");
+			int PuntosContricante = atoi (p); //Obtenemos los puntos del jugador visitante
+			//Buscar comando para obtener el numero total de partidas guardadas en la base de datos (PARA HACER)
+			
+			strcpy (ConsultaResultante,"SELECT COUNT (*) FROM Partida");
+			GuardarPartida (conn, Usuario, PuntosLocal, UsuarioContrincante, PuntosContrincante);
+			
+		}
+		break;
+		
+		case 10: //Peticion para pasar los datos de posicion del jugador al contrincante
+		{
+			//Obtenemos las variables de posicion del jugador
+			p = strtok(NULL, "/");
+			int PosicionX = atoi (p);
+			p = strtok(NULL, "/");
+			int PosicionY = atoi (p);
+			
+			//Buscamos el socket del contrincante para poder saber a quien le debemos de enviar la informacion
+			int SocketContrincante = BuscarSocketJugador(&ListaUsuariosConectados, UsuarioContrincante);
+			
+			//Preparamos el string con el mensaje resultante
+			sprintf(Respuesta, "10/%d/%d", PosicionX, PosicionY);
+			write(SocketContrincante, Respuesta, strlen(Respuesta));
 		}
 		break;
 		}

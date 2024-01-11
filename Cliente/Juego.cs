@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,13 +15,13 @@ namespace Cliente
     public partial class Juego : Form
     {
         bool JugadorLocal;
-        public Juego(bool JugadorLocal)
+        Socket server;
+        public Juego(bool JugadorLocal, Socket server)
         {
-            
             InitializeComponent();
             this.BackgroundImageLayout = ImageLayout.Stretch;
             this.JugadorLocal = JugadorLocal;
-           
+            this.server = server;
         }
         
         private int velocidadSalto = 10;
@@ -28,19 +30,21 @@ namespace Cliente
         private int gravedad = 3;
         private int alturaSalto = 100;    
         private int sueloY;               
-        private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
+        private bool enSalto = false;  //Variable para verificar si el personaje está en el aire
+        
+        //Variables para guardar los puntos de cada jugador
         private int MarcadorLocal = 0;
         private int MarcadorVisitante = 0;
-        private int iniciopartida = 0;
+
+        //Tiempo que ha transcurrido en la partida
+        private int TiempoPartida = 0;
 
         private void Juego_KeyPress(object sender, KeyPressEventArgs e) // Movimineto si dejas pulsada la tecla
         {
             if (JugadorLocal == true)
             {
-
-
-                int x = Jugador2.Location.X;
-                int y = Jugador2.Location.Y;
+                int x = JugadorIzquierda.Location.X;
+                int y = JugadorIzquierda.Location.Y;
                 if (e.KeyChar == 'D' || e.KeyChar == 'd')
                 {
                     x += 10;
@@ -58,12 +62,12 @@ namespace Cliente
                     x = 975 - 76;
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
-                Jugador2.Location = movimiento;
+                JugadorIzquierda.Location = movimiento;
             }
             if (JugadorLocal == false)
             {
-                int x = Jugador1.Location.X;
-                int y = Jugador1.Location.Y;
+                int x = JugadorDerecha.Location.X;
+                int y = JugadorDerecha.Location.Y;
                 if (e.KeyChar == 'D' || e.KeyChar == 'd')
                 {
                     x += 10;
@@ -81,74 +85,25 @@ namespace Cliente
                     x = 975 - 76;
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
-                Jugador1.Location = movimiento;
+                JugadorDerecha.Location = movimiento;
             }
         }
 
-
         private void Juego_KeyDown(object sender, KeyEventArgs e) // Moviento al pulsar la tecla
         {
-          
-
             if (e.KeyCode == Keys.Space && !enSalto)
             {
                 enSalto = true;
                 TimerSalto.Start();
             }
-            
-
         }
-       
-        private void Temporizador_Tick(object sender, EventArgs e) //salto
-        {
-            if (JugadorLocal == true)
-            {
-
-                Jugador2.Top -= velocidadSalto;
-                int x = Jugador1.Location.X;
-                if (Jugador2.Top < sueloY - alturaSalto)
-                {
-                    velocidadSalto = -velocidadSalto;
-                }
-
-                if (Jugador2.Location.Y > sueloY)
-                {
-                    TimerSalto.Stop();
-                    enSalto = false;
-                    velocidadSalto = Math.Abs(velocidadSalto);
-                    Jugador2.Location = new Point(x, sueloY);
-                }
-            }
-
-            if (JugadorLocal == false)
-            {
-
-                Jugador1.Top -= velocidadSalto;
-                int x = Jugador1.Location.X;
-                if (Jugador1.Top < sueloY - alturaSalto)
-                {
-                    velocidadSalto = -velocidadSalto;
-                }
-
-                if (Jugador1.Location.Y > sueloY)
-                {
-                    TimerSalto.Stop();
-                    enSalto = false;
-                    velocidadSalto = Math.Abs(velocidadSalto);
-                    Jugador1.Location = new Point(x, sueloY);
-                }
-            }
-        }
-
         private void Juego_Load(object sender, EventArgs e)
         {
             sueloY = 250;  // Posicion Y del juador - altura de la imagen del jugador: 352-72
             MoverPelota(); // Mueve la pelota           
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
-            ColisionConJugador1(pelota, Jugador1);
-            ColisionConJugador2(pelota, Jugador2);
-
-            
+            ColisionConJugadorDerecha(pelota, JugadorDerecha);
+            ColisionConJugadorIzquierda(pelota, JugadorIzquierda);
         }
         
         private bool GolPorteriaIzquierda( PictureBox pb1, PictureBox pb2) // Checkea si hay colision entre la porteria y la pelota
@@ -177,7 +132,7 @@ namespace Cliente
             else
                 return false;
         }
-        private bool ColisionConJugador1(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
+        private bool ColisionConJugadorDerecha(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el JugadorDerecha y la pelota 
         {
             TimerPelota.Enabled = true;
             TimerPelota.Start();
@@ -188,7 +143,7 @@ namespace Cliente
             return hayColision;
 
         }
-        private bool ColisionConJugador2(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador2 y la pelota 
+        private bool ColisionConJugadorIzquierda(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el JugadorIzquierda y la pelota 
         {
             TimerPelota.Enabled = true;
             TimerPelota.Start();
@@ -215,21 +170,21 @@ namespace Cliente
                 }
             }
 
-            // Verifica la colisión con el jugador1
-            if (ColisionConJugador1(Jugador1, pelota))
+            // Verifica la colisión con el JugadorDerecha
+            if (ColisionConJugadorDerecha(JugadorDerecha, pelota))
             {
-                // Realiza alguna acción en caso de colisión con el jugador1
+                // Realiza alguna acción en caso de colisión con el JugadorDerecha
                 // Por ejemplo, cambiar la dirección de la pelota o ajustar su posición
                 velocidadReboteX = -velocidadReboteX; // Cambia la dirección en el eje X
-                RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
+                RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al JugadorDerecha
             }
-            // Verifica la colisión con el jugador1
-           if (ColisionConJugador2(Jugador2, pelota))
+            // Verifica la colisión con el JugadorDerecha
+           if (ColisionConJugadorIzquierda(JugadorIzquierda, pelota))
             {
-                // Realiza alguna acción en caso de colisión con el jugador2
+                // Realiza alguna acción en caso de colisión con el JugadorIzquierda
                 // Por ejemplo, cambiar la dirección de la pelota o ajustar su posición
                 velocidadReboteX = -velocidadReboteX; // Cambia la dirección en el eje X
-                RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
+                RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al JugadorDerecha
             }
             if (GolPorteriaIzquierda(pelota, porteria) == true)
             {
@@ -314,16 +269,135 @@ namespace Cliente
             pelota.Location = new Point(pelota.Location.X, 70);
         }
 
+        //Funcíón que determina qué sucede cuando avanza el tiempo durante la partida
         private void TimerPartida_Tick(object sender, EventArgs e)
         {
-            iniciopartida++;
-            Duracion.Text = Convert.ToString(iniciopartida);
-            if (iniciopartida == 120)
+            TiempoPartida++;
+            Duracion.Text = Convert.ToString(TiempoPartida);
+            if (TiempoPartida == 120)
             {
-                MessageBox.Show("La partida se ha acabado, el ganador es:");
                 TimerPartida.Stop();
                 TimerSalto.Stop();
+
+                //Determinamos el mensaje postpartido que ha de salir en función del resultado
+                if ((MarcadorLocal > MarcadorVisitante) && (JugadorLocal == true))
+                {
+                    MessageBox.Show("¡Has ganado, enhorabuena!");
+                }
+
+                else if ((MarcadorLocal < MarcadorVisitante) && (JugadorLocal == true))
+                {
+                    MessageBox.Show("No has ganado, lástima.");
+                }
+
+                else if ((MarcadorLocal > MarcadorVisitante) && (JugadorLocal == false))
+                {
+                    MessageBox.Show("No has ganado, lástima.");
+                }
+
+                else if ((MarcadorLocal < MarcadorVisitante) && (JugadorLocal == false))
+                {
+                    MessageBox.Show("¡Has ganado, enhorabuena!");
+                }
+
+                //Qué decir en caso de empate
+                else if ((MarcadorLocal == MarcadorVisitante))
+                {
+                    MessageBox.Show("Vaya, habéis empatado...");
+                }
+
+                //El jugador local envía el resultado final al servidor para guardar los datos
+                if (JugadorLocal == true)
+                {
+                    string mensaje = "9/" + Convert.ToString(MarcadorLocal) + "/" + Convert.ToString(MarcadorVisitante);
+
+                    // Enviamos al servidor la petición deseada
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
+                
+                //Cerramos la ventana, puesto que la partida ya ha terminado
                 Close();
+            }
+        }
+
+        //Función que calcula el tiempo que un jugador ha de estar en el aire tras empezar un salto
+        private void TimerSalto_Tick(object sender, EventArgs e)
+        {
+            if (JugadorLocal == true)
+            {
+
+                JugadorIzquierda.Top -= velocidadSalto;
+                int x = JugadorDerecha.Location.X;
+                if (JugadorIzquierda.Top < sueloY - alturaSalto)
+                {
+                    velocidadSalto = -velocidadSalto;
+                }
+
+                if (JugadorIzquierda.Location.Y > sueloY)
+                {
+                    TimerSalto.Stop();
+                    enSalto = false;
+                    velocidadSalto = Math.Abs(velocidadSalto);
+                    JugadorIzquierda.Location = new Point(x, sueloY);
+                }
+            }
+
+            if (JugadorLocal == false)
+            {
+
+                JugadorDerecha.Top -= velocidadSalto;
+                int x = JugadorDerecha.Location.X;
+                if (JugadorDerecha.Top < sueloY - alturaSalto)
+                {
+                    velocidadSalto = -velocidadSalto;
+                }
+
+                if (JugadorDerecha.Location.Y > sueloY)
+                {
+                    TimerSalto.Stop();
+                    enSalto = false;
+                    velocidadSalto = Math.Abs(velocidadSalto);
+                    JugadorDerecha.Location = new Point(x, sueloY);
+                }
+            }
+        }
+
+        //Temporizador que determina cuando hay que pasar la posición del jugador controlado al rival
+        private void TimerPosicionParaRival_Tick(object sender, EventArgs e)
+        {
+            //Determinamos cuáles son las posiciones que hay que pasar en el mensaje
+            if (JugadorLocal == true)
+            {
+                string mensaje = "10/" + Convert.ToString(JugadorDerecha.Location.X) + "/" + Convert.ToString(JugadorDerecha.Location.Y);
+                //Enviamos al servidor la petición deseada
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+
+            else if (JugadorLocal == false)
+            {
+                string mensaje = "10/" + Convert.ToString(JugadorIzquierda.Location.X) + "/" + Convert.ToString(JugadorIzquierda.Location.Y);
+                //Enviamos al servidor la petición deseada
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
+        public void ActualizarPosicionRival(int PosicionX, int PosicionY)
+        {
+            if (JugadorLocal == true)
+            {
+                int x = JugadorDerecha.Location.X;
+                x = PosicionX;
+                int y = JugadorDerecha.Location.Y;
+                y = JugadorDerecha.Location.Y;
+                JugadorDerecha.Location = new Point(x, y);
+            }
+            else
+            {
+                PosicionX = JugadorIzquierda.Location.X;
+                PosicionY = JugadorIzquierda.Location.Y;
             }
         }
     }

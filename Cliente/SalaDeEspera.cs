@@ -240,7 +240,7 @@ namespace Cliente
                 {
                     ListaVentanasJuego.Clear();
                 }
-                    Juego Juego = new Juego(false); // abrimos como jugador visitante
+                    Juego Juego = new Juego(false, server); // abrimos como jugador visitante
                     ListaVentanasJuego.Add(Juego);
                     Juego.ShowDialog();
                 
@@ -334,7 +334,7 @@ namespace Cliente
             {
                 ListaVentanasJuego.Clear();
             }
-                Juego Juego = new Juego(true); // abrimos como jugador local
+                Juego Juego = new Juego(true, server); // abrimos como jugador local
                 ListaVentanasJuego.Add(Juego);
                 Juego.ShowDialog();
             
@@ -362,6 +362,11 @@ namespace Cliente
             {
                 MessageBox.Show("No has seleccionado ningún jugador válido para invitar, selecciona a uno para empezar la partida");
             }
+        }
+
+        public void ActualizarPosicionRival(int PosicionX, int PosicionY)
+        {
+            ListaVentanasJuego[0].ActualizarPosicionRival(PosicionX, PosicionY);
         }
     }
 }
