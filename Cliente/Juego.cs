@@ -17,7 +17,6 @@ namespace Cliente
             
             InitializeComponent();
             this.BackgroundImageLayout = ImageLayout.Stretch;
-
             Jugador1.Enabled = true;
         }
         
@@ -28,7 +27,8 @@ namespace Cliente
         private int alturaSalto = 100;    
         private int sueloY;               
         private bool enSalto = false;     // Variable para verificar si el personaje está en el aire
-       
+        private int MarcadorLocal = 0;
+        private int MarcadorVisitante = 0; 
 
         private void Juego_KeyPress(object sender, KeyPressEventArgs e) // Movimineto si dejas pulsada la tecla
         {
@@ -96,24 +96,35 @@ namespace Cliente
             VerificarColisiones(); // Verifica colisiones y realiza el rebote si es necesario
             ColisionConJugador1(pelota, Jugador1);
             ColisionConJugador2(pelota, Jugador2);
+
             
         }
         
-        private bool Gol( PictureBox pb1, PictureBox pb2, PictureBox pb3) // Checkea si hay colision entre la porteria y la pelota
+        private bool GolPorteriaIzquierda( PictureBox pb1, PictureBox pb2) // Checkea si hay colision entre la porteria y la pelota
         {
             Rectangle rec1 = new Rectangle(pb1.Location , pb1.Size);
             Rectangle rec2 = new Rectangle(pb2.Location, pb2.Size);
-            Rectangle rec3 = new Rectangle(pb3.Location, pb3.Size);
             bool HayGol = rec1.IntersectsWith(rec2); 
-            bool HayGol2 = rec1.IntersectsWith(rec3);
-            if (HayGol || HayGol2)
+            if (HayGol)
             {
                 return true;
             }
+
             else
                 return false;
-            
+        }
+        private bool GolPorteriaDerecha(PictureBox pb1, PictureBox pb2) // Checkea si hay colision entre la porteria y la pelota
+        {
+            Rectangle rec1 = new Rectangle(pb1.Location, pb1.Size);
+            Rectangle rec2 = new Rectangle(pb2.Location, pb2.Size);
+            bool HayGol = rec1.IntersectsWith(rec2);
+            if (HayGol)
+            {
+                return true;
+            }
 
+            else
+                return false;
         }
         private bool ColisionConJugador1(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el jugador1 y la pelota 
         {
@@ -169,11 +180,18 @@ namespace Cliente
                 velocidadReboteX = -velocidadReboteX; // Cambia la dirección en el eje X
                 RealizarRebote(true, false); // Ajusta la posición de la pelota para evitar que pase al jugador1
             }
-            if (Gol(pelota, porteria, porteria2) == true)
+            if (GolPorteriaIzquierda(pelota, porteria) == true)
             {
-                pelota.Location = new Point(400, 250); // Si hay gol cambiamos la posicion a la inicial
+                pelota.Location = new Point(350, 250); // Si hay gol cambiamos la posicion a la inicial
+                MarcadorVisitante = MarcadorVisitante + 1;
             }
-
+            if ( GolPorteriaDerecha ( pelota, porteria2)== true)
+            {
+                pelota.Location = new Point(350, 250); // Si hay gol cambiamos la posicion a la inicial
+                MarcadorLocal = MarcadorLocal + 1;
+            }
+            Local.Text = Convert.ToString(MarcadorLocal);
+            Visitante.Text = Convert.ToString(MarcadorVisitante);
         }
         private void MoverPelota()
         {

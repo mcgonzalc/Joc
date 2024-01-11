@@ -36,13 +36,13 @@ namespace Cliente
             this.pelota = new System.Windows.Forms.PictureBox();
             this.TimerSalto = new System.Windows.Forms.Timer(this.components);
             this.TimerPelota = new System.Windows.Forms.Timer(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.porteria2 = new System.Windows.Forms.PictureBox();
             this.porteria = new System.Windows.Forms.PictureBox();
+            this.Local = new System.Windows.Forms.Label();
+            this.Visitante = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pelota)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.porteria2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.porteria)).BeginInit();
             this.SuspendLayout();
@@ -51,10 +51,9 @@ namespace Cliente
             // 
             this.Jugador1.BackColor = System.Drawing.Color.Transparent;
             this.Jugador1.Image = global::Cliente.Properties.Resources.jugador_3;
-            this.Jugador1.Location = new System.Drawing.Point(632, 240);
-            this.Jugador1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Jugador1.Location = new System.Drawing.Point(948, 369);
             this.Jugador1.Name = "Jugador1";
-            this.Jugador1.Size = new System.Drawing.Size(51, 47);
+            this.Jugador1.Size = new System.Drawing.Size(76, 72);
             this.Jugador1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador1.TabIndex = 0;
             this.Jugador1.TabStop = false;
@@ -63,10 +62,9 @@ namespace Cliente
             // 
             this.Jugador2.BackColor = System.Drawing.Color.Transparent;
             this.Jugador2.Image = global::Cliente.Properties.Resources.jugador_2;
-            this.Jugador2.Location = new System.Drawing.Point(100, 240);
-            this.Jugador2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Jugador2.Location = new System.Drawing.Point(150, 369);
             this.Jugador2.Name = "Jugador2";
-            this.Jugador2.Size = new System.Drawing.Size(51, 47);
+            this.Jugador2.Size = new System.Drawing.Size(76, 72);
             this.Jugador2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Jugador2.TabIndex = 1;
             this.Jugador2.TabStop = false;
@@ -75,9 +73,10 @@ namespace Cliente
             // 
             this.pelota.BackColor = System.Drawing.Color.Transparent;
             this.pelota.Image = global::Cliente.Properties.Resources.pelota;
-            this.pelota.Location = new System.Drawing.Point(348, 247);
+            this.pelota.Location = new System.Drawing.Point(522, 380);
+            this.pelota.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pelota.Name = "pelota";
-            this.pelota.Size = new System.Drawing.Size(40, 40);
+            this.pelota.Size = new System.Drawing.Size(60, 62);
             this.pelota.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pelota.TabIndex = 2;
             this.pelota.TabStop = false;
@@ -90,51 +89,64 @@ namespace Cliente
             // 
             this.TimerPelota.Tick += new System.EventHandler(this.TimerPelota_Tick);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(67, 32);
-            this.pictureBox1.TabIndex = 3;
-            this.pictureBox1.TabStop = false;
-            // 
             // porteria2
             // 
             this.porteria2.BackColor = System.Drawing.Color.Transparent;
             this.porteria2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.porteria2.Location = new System.Drawing.Point(707, 180);
-            this.porteria2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.porteria2.Location = new System.Drawing.Point(1060, 277);
             this.porteria2.Name = "porteria2";
-            this.porteria2.Size = new System.Drawing.Size(31, 107);
+            this.porteria2.Size = new System.Drawing.Size(46, 165);
             this.porteria2.TabIndex = 4;
             this.porteria2.TabStop = false;
             // 
             // porteria
             // 
             this.porteria.BackColor = System.Drawing.Color.Transparent;
-            this.porteria.Location = new System.Drawing.Point(0, 180);
-            this.porteria.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.porteria.Location = new System.Drawing.Point(0, 277);
             this.porteria.Name = "porteria";
-            this.porteria.Size = new System.Drawing.Size(29, 107);
+            this.porteria.Size = new System.Drawing.Size(44, 165);
             this.porteria.TabIndex = 5;
             this.porteria.TabStop = false;
             // 
+            // Local
+            // 
+            this.Local.AutoSize = true;
+            this.Local.BackColor = System.Drawing.Color.Transparent;
+            this.Local.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.Local.Location = new System.Drawing.Point(382, 51);
+            this.Local.MinimumSize = new System.Drawing.Size(50, 50);
+            this.Local.Name = "Local";
+            this.Local.Size = new System.Drawing.Size(51, 50);
+            this.Local.TabIndex = 6;
+            this.Local.Text = "label1";
+            // 
+            // Visitante
+            // 
+            this.Visitante.AutoSize = true;
+            this.Visitante.BackColor = System.Drawing.Color.Transparent;
+            this.Visitante.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.Visitante.Location = new System.Drawing.Point(562, 51);
+            this.Visitante.MinimumSize = new System.Drawing.Size(50, 50);
+            this.Visitante.Name = "Visitante";
+            this.Visitante.Size = new System.Drawing.Size(51, 50);
+            this.Visitante.TabIndex = 7;
+            this.Visitante.Text = "label2";
+            // 
             // Juego
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(736, 381);
+            this.ClientSize = new System.Drawing.Size(1104, 586);
+            this.Controls.Add(this.Visitante);
+            this.Controls.Add(this.Local);
             this.Controls.Add(this.porteria);
             this.Controls.Add(this.porteria2);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.pelota);
             this.Controls.Add(this.Jugador2);
             this.Controls.Add(this.Jugador1);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Juego";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Juego";
@@ -144,10 +156,10 @@ namespace Cliente
             ((System.ComponentModel.ISupportInitialize)(this.Jugador1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Jugador2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pelota)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.porteria2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.porteria)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -158,8 +170,9 @@ namespace Cliente
         private System.Windows.Forms.PictureBox pelota;
         private System.Windows.Forms.Timer TimerSalto;
         private System.Windows.Forms.Timer TimerPelota;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox porteria2;
         private System.Windows.Forms.PictureBox porteria;
+        private System.Windows.Forms.Label Local;
+        private System.Windows.Forms.Label Visitante;
     }
 }
