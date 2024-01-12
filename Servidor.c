@@ -57,6 +57,9 @@ int SocketVacioEncontrado;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
+//Funcion que sirve para anadir un jugador a la lista de usuarios conectados
+//0 = jugador anadido correctamente
+//-1 = lista de jugadores conectados llena
 int AnadirJugadorConectado(ListaConectados *ListaJugadoresConectados, char NombreNuevo[80], int Socket)
 {
 	//Si la lista ya esta llena, indicar que no hay espacio para mas jugadores
@@ -76,6 +79,9 @@ int AnadirJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nombr
 	}
 }
 
+//Funcion que obtiene el socket de un jugador
+//Num de socket = jugador encontrado
+//-1 = jugador no localizable
 int BuscarSocketJugador(ListaConectados *ListaJugadoresConectados, char NombreaBuscar[80])
 {
 	int JugadorEncontrado = 0;
@@ -108,6 +114,9 @@ int BuscarSocketJugador(ListaConectados *ListaJugadoresConectados, char NombreaB
 	}
 }
 
+//Funcion que devuelve la posicion de un jugador en la tabla de usuarios conectados
+//Num de posicion = jugador encontrado
+//-1 = jugador no encontrado
 int BuscarPosicionJugador(ListaConectados *ListaJugadoresConectados, char NombreaBuscar[80])
 {	
 	//Se hace una busqueda mientras no nos pasemos del limite de la estructura o hasta que encontremos el jugador
@@ -124,6 +133,9 @@ int BuscarPosicionJugador(ListaConectados *ListaJugadoresConectados, char Nombre
 	return -1;
 }
 
+//Funcion que se utiliza para quitar un jugador de la lista de conectados a la hora de desconectarse
+//0 = jugador desconectado correctamente
+//-1 = jugador no localizable en la tabla
 int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char NombreaBorrar[80])
 {
 	int PosicionJugadoraEliminar = BuscarPosicionJugador(ListaJugadoresConectados, NombreaBorrar);
@@ -146,6 +158,7 @@ int EliminarJugadorConectado(ListaConectados *ListaJugadoresConectados, char Nom
 	}
 }
 
+//Funcion que devuelve la lista de jugadores conectados
 void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, char ListaResultante[1000])
 {
 	pthread_mutex_lock(&mutex);
@@ -161,7 +174,11 @@ void ObtenerListaJugadoresConectados(ListaConectados *ListaJugadoresConectados, 
 	pthread_mutex_unlock(&mutex);
 }
 
-void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Respuesta[512])
+//Funcion que se utiliza para guardar en la BBDD un usuario creado
+//0 = cuenta creada correctamente
+//1 = error en la base de datos
+//2 = nombre de usuario ya registrado previamente
+int RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80])
 {	
 	pthread_mutex_lock(&mutex);
 	MYSQL_RES *resultado;
@@ -169,15 +186,18 @@ void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Re
 	char ConsultaResultante[1250];
 	int ResultadoConsulta;
 	
+	//Realizamos una consulta para saber si el nombre escogido ya esta en uso
 	strcpy (ConsultaResultante,"SELECT Jugador.Nombre FROM Jugador WHERE Jugador.Nombre = '");
 	strcat (ConsultaResultante, Usuario);
 	strcat (ConsultaResultante,"'");
 	
 	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	
+	//Nos aseguramos de ver si se puede realizar la consulta correctamente
 	if (ResultadoConsulta != 0)
 	{
-		printf ("Error al consultar datos de la base %u %s\n",
-				mysql_errno(conn), mysql_error(conn));
+		printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
+		return 1;
 	}
 	else if (ResultadoConsulta == 0)
 	{
@@ -198,12 +218,16 @@ void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Re
 			if (aperturamysqlconsulta2 != 0)
 			{
 				printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
-				sprintf(Respuesta, "2/%s/ERROR", Usuario);
+				return 1;
 			}
+			//Realizamos el registro del usuario en la BBDD
 			else if (aperturamysqlconsulta2 == 0)
 			{
 				resultado = mysql_store_result (conn);
 				row = mysql_fetch_row (resultado);
+				
+				//Obtenemos el numero total de jugadores registrados para poder ponerle
+				//su identificador correspondiente
 				int NumeroJugadoresInicial;
 				char NumeroJugadoresFinal[100];
 				
@@ -225,17 +249,19 @@ void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Re
 				strcat (ConsultaResultante, Usuario);
 				strcat (ConsultaResultante, "', '");
 				strcat (ConsultaResultante, Contrasena);
+				strcat (ConsultaResultante, "', '");
+				strcat (ConsultaResultante, 1);
 				strcat (ConsultaResultante, "')");
 				
 				ResultadoConsulta = mysql_query (conn, ConsultaResultante);
 				if (ResultadoConsulta == 0)
 				{
-					sprintf(Respuesta, "2/%s/SI", Usuario);
+					return 0;
 				}
 				else if (ResultadoConsulta != 0)
 				{
 					printf ("Error al introducir datos en la base %u %s\n", mysql_errno(conn), mysql_error(conn));
-					sprintf(Respuesta, "2/%s/ERROR", Usuario);
+					return 1;
 				}
 				
 			}
@@ -245,14 +271,19 @@ void RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80], char Re
 		//Si se encuentra un usuario con ese nombre
 		else if (row != NULL)
 		{
-			sprintf(Respuesta, "2/%s/NO", Usuario);
+			return 2;
 		}
 	}
 	
 	pthread_mutex_unlock(&mutex);
 }
 
-void IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socket, char Respuesta[512])
+//Funcion que se utiliza para poder facilitar el inicio de sesion a un usuario que se quiere conectar
+//0 = inicio de sesion correcto
+//1 = cuenta no existente
+//2 = cuenta deshabilitada
+//3 = servidor saturado
+int IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socket)
 {
 	//Comprobamos que el usuario ya esta registrado previamente
 	strcpy (ConsultaResultante,"SELECT Jugador.Nombre FROM Jugador WHERE Jugador.Nombre = '");
@@ -266,6 +297,7 @@ void IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socke
 	if (ResultadoConsulta != 0)
 	{
 		printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
+		return 1;
 	}
 	else if (ResultadoConsulta == 0)
 	{
@@ -279,46 +311,81 @@ void IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socke
 		//Si no encuentra ningún usuario con ese nombre
 		if (row == NULL)
 		{
-			sprintf(Respuesta, "1/%s/NO", Usuario);
+			return 1;
 		}
 		
 		//Si se encuentra un usuario con ese nombre
 		else if (row != NULL)
 		{
-			//Se hace un string del primer valor obtenido de la
-			//columna generada con la consulta
-			strcpy(Respuesta, row[0]);
-			
-			//Se comprueba que el nombre obtenido es el del usuario
-			//introducido
-			if(strcmp(Respuesta, Usuario) == 0)
+			//Se comprueba si el usuario ha deshabilitado su cuenta previamente
+			if (row[3] == 0)
 			{
-				pthread_mutex_lock(&mutex);
-				ResultadoConsulta = AnadirJugadorConectado(&ListaUsuariosConectados, Usuario, Socket);
-				pthread_mutex_unlock(&mutex);
-				
-				//Aceptamos el inicio de sesión basandonos en si hay espacio suficiente en el servidor para mas personas
-				if (ResultadoConsulta == 0)
-				{
-					sprintf(Respuesta, "1/%s/SI", Usuario);
-				}
-				else if (ResultadoConsulta == -1)
-				{
-					sprintf(Respuesta, "1/%s/NO", Usuario);
-				}
+				return 2;
 			}
-			
-			//Para evitar errores, en caso de que salga algun resultado,
-			//se hace de todos modos la comparacion para asegurarse que esta
-			//todo bien
-			else if(strcmp(Respuesta, Usuario) != 0)
+			else if (row[3] == 1)
 			{
-				sprintf(Respuesta, "1/%s/NO", Usuario);
+				char UsuarioEncontrado;
+				//Se hace un string del primer valor obtenido de la
+				//columna generada con la consulta
+				sprintf(UsuarioEncontrado, "%s", row[0]);
+			
+				//Se comprueba que el nombre obtenido es el del usuario
+				//introducido
+				if(strcmp(UsuarioEncontrado, Usuario) == 0)
+				{
+					pthread_mutex_lock(&mutex);
+					ResultadoConsulta = AnadirJugadorConectado(&ListaUsuariosConectados, Usuario, Socket);
+					pthread_mutex_unlock(&mutex);
+				
+					//Aceptamos el inicio de sesión basandonos en si hay espacio suficiente en el servidor para mas personas
+					if (ResultadoConsulta == 0)
+					{
+						return 0;
+					}
+					else if (ResultadoConsulta == -1)
+					{
+						return 3;
+					}
+				}
+			
+				//Para evitar errores, en caso de que salga algun resultado,
+				//se hace de todos modos la comparacion para asegurarse que esta
+				//todo bien
+				else if(strcmp(UsuarioEncontrado, Usuario) != 0)
+				{
+					return 1;
+				}
 			}
 		}
 	}
 }
 
+//Funcion que se utiliza para poder facilitar el inicio de sesion a un usuario que se quiere conectar
+//0 = cuenta deshabilitada correctamente
+//1 = proceso no completado correctamente
+int DeshabilitarCuenta(MYSQL *conn, char Usuario[80])
+{
+	//Comprobamos que el usuario ya esta registrado previamente
+	strcpy (ConsultaResultante,"UPDATE Jugador SET Estado = 0 WHERE Jugador.Nombre = '");
+	strcat (ConsultaResultante, Usuario);
+	strcat (ConsultaResultante,"'");
+	int ResultadoConsulta = mysql_query (conn, ConsultaResultante);
+	
+	//Si vemos que no nos sale ningun usuario, informamos
+	if (ResultadoConsulta != 0)
+	{
+		printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
+		return 1;
+	}
+	//Si el proceso se completa correctamente, informamos
+	else if (ResultadoConsulta == 0)
+	{
+		printf("La cuenta de %s se ha borrado correctamente.\n", Usuario);
+		return 0;
+	}
+}
+
+//Funcion que devuelve un string con la puntuacion de un jugador con el formato que el cliente espera
 void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
 {
 	int PuntosTotales = 0;
@@ -361,6 +428,7 @@ void ObtenerPuntuacionJugador(MYSQL *conn, char Usuario[80], char Respuesta[512]
 		sprintf(Respuesta, "3/%d", PuntosTotales);
 }
 
+//Funcion que devuelve un string con el formato que el cliente espera para indicar las partidas que ha ganado un jugador
 void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
 {
 	int PartidasGanadas = 0;
@@ -401,6 +469,7 @@ void ObtenerPartidasGanadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 		sprintf(Respuesta, "4/%d", PartidasGanadas);
 }
 
+//Funcion que devuelve un string con el formato que el cliente espera para indicar las partidas que ha disputado un jugador
 void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta[512])
 {
 	int PartidasJugadas = 0;
@@ -439,6 +508,7 @@ void ObtenerPartidasJugadasJugador(MYSQL *conn, char Usuario[80], char Respuesta
 		sprintf(Respuesta, "5/%d", PartidasJugadas);
 }
 
+//Funcion que crea una nueva entrada en la lista de partidas activas del servidor
 void CrearPartida(ListaPartidasActivas *ListaPartidasPreparadas, char Jugador1[80], char Jugador2[80])
 {
 	pthread_mutex_lock(&mutex);
@@ -459,6 +529,7 @@ void CrearPartida(ListaPartidasActivas *ListaPartidasPreparadas, char Jugador1[8
 	pthread_mutex_unlock(&mutex);
 }
 
+//Funcion que devuelve un string de la fecha actual del sistema
 void ObtenerFechaActual(char Respuesta[200])
 {
 	time_t now;
@@ -475,9 +546,9 @@ void ObtenerFechaActual(char Respuesta[200])
 	printf("La fecha guardada para esta partida es: %d/%d/%d %d:%d\n", Dia, Mes, Ano, Horas, Minutos); //Si no funciona, revisar: https://www.techiedelight.com/print-current-date-and-time-in-c/
 	sprintf(Respuesta, "%d/%d/%d %d:%d", Dia, Mes, Ano, Horas, Minutos);
 }
-	
-	
-void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[80], int Puntos2) //WIP
+
+//Funcion que sirve para guardar una partida en la BBDD una vez finalizada
+void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[80], int Puntos2)
 {
 	//Obtenemos el numero total de partidas guardadas en la base de datos
 	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
@@ -522,7 +593,8 @@ void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[8
 	//Recogemos el resultado de la primera fila
 	row = mysql_fetch_row (resultado);
 	
-	int Identificador = atoi(row[0]);
+	int Identificador;
+	Identificador = atoi(row[0]);
 	
 	//Guardamos el resultado del primero jugador en la base de datos
 	sprintf(ConsultaResultante, "INSERT INTO Participacion VALUES(%d,%d,%d)", Identificador, NumeroPartida, Puntos1);
@@ -641,7 +713,26 @@ void *AtenderCliente (void *socket)
 			
 			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
 			
-			IniciarSesion(conn, Usuario, Contrasena, sock_conn, Respuesta);
+			int = RespuestaInicioSesion;
+			
+			RespuestaInicioSesion = IniciarSesion(conn, Usuario, Contrasena, sock_conn);
+			
+			//Preparamos la respuesta en funcion de la respuesta de la funcion de inicio de sesion
+			switch (RespuestaInicioSesion)
+			{
+				case 0:
+				sprintf(Respuesta, "1/%s/SI", Usuario);
+				break;
+				case 1:
+				sprintf(Respuesta, "1/%s/NO", Usuario);
+				break;
+				case 2:
+				sprintf(Respuesta, "1/%s/DESHABILITADO", Usuario);
+				break;
+				case 3:
+				sprintf(Respuesta, "1/%s/SATURADO", Usuario);
+				break;
+			}
 			
 			//Enviamos la respuesta del servidor al cliente
 			printf ("Respuesta: %s\n", Respuesta);
@@ -676,7 +767,23 @@ void *AtenderCliente (void *socket)
 			
 			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
 			
-			RegistrarCuenta(conn, Usuario, Contrasena, Respuesta);
+			int RespuestaRegistroCuenta;
+			
+			RespuestaRegistroCuenta = RegistrarCuenta(conn, Usuario, Contrasena);
+			
+			//Preparamos la respuesta en funcion de la respuesta de la funcion de inicio de sesion
+			switch (RespuestaRegistroCuenta)
+			{
+				case 0:
+				sprintf(Respuesta, "2/%s/SI", Usuario);
+				break;
+				case 1:
+				sprintf(Respuesta, "2/%s/ERROR", Usuario);
+				break;
+				case 2:
+				sprintf(Respuesta, "2/%s/NO", Usuario);
+				break;
+			}
 			
 			printf ("Respuesta: %s\n", Respuesta);
 			write (sock_conn, Respuesta, strlen(Respuesta));
@@ -809,11 +916,9 @@ void *AtenderCliente (void *socket)
 			int PuntosLocal = atoi (p); //Obtenemos los puntos del jugador local
 			p = strtok(NULL, "/");
 			int PuntosContricante = atoi (p); //Obtenemos los puntos del jugador visitante
-			//Buscar comando para obtener el numero total de partidas guardadas en la base de datos (PARA HACER)
 			
 			strcpy (ConsultaResultante,"SELECT COUNT (*) FROM Partida");
-			GuardarPartida (conn, Usuario, PuntosLocal, UsuarioContrincante, PuntosContrincante);
-			
+			GuardarPartida (conn, Usuario, PuntosLocal, UsuarioContrincante, PuntosContricante);
 		}
 		break;
 		
@@ -831,6 +936,40 @@ void *AtenderCliente (void *socket)
 			//Preparamos el string con el mensaje resultante
 			sprintf(Respuesta, "10/%d/%d", PosicionX, PosicionY);
 			write(SocketContrincante, Respuesta, strlen(Respuesta));
+		}
+		break;
+		case 11: //Peticion para deshabilitar una cuenta
+		{
+			char Contrasena[80];
+			p = strtok(NULL, "/");
+			strcpy (Usuario, p); //Ya tenemos el usuario
+			p = strtok(NULL, "/");
+			strcpy (Contrasena, p); //Conseguimos la contrasena
+			
+			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
+			
+			int = RespuestaInicioSesion;
+			
+			RespuestaInicioSesion = IniciarSesion(conn, Usuario, Contrasena, sock_conn);
+			
+			//Detectamos que el usuario que inicia sesion existe y esta habilitado
+			if (RespuestaInicioSesion == 0)
+			{
+				int RespuestaDeshabilitarCuenta;
+				RespuestaDeshabilitarCuenta = DeshabilitarCuenta(conn, Usuario);
+				sprintf(Respuesta, "11/SI");
+			}
+			
+			//Devolver al cliente un mensaje de error por motivos de seguridad/privacidad
+			else
+			{
+				sprintf(Respuesta, "11/NO");
+			}
+			
+			//Enviamos la respuesta del servidor al cliente
+			printf ("Respuesta: %s\n", Respuesta);
+			write (sock_conn, Respuesta, strlen(Respuesta));
+			terminar = 1;
 		}
 		break;
 		}

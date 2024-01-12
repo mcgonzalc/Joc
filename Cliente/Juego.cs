@@ -388,10 +388,8 @@ namespace Cliente
         {
             if (JugadorLocal == true)
             {
-                int x = JugadorDerecha.Location.X;
-                x = PosicionX;
-                int y = JugadorDerecha.Location.Y;
-                y = JugadorDerecha.Location.Y;
+                int x = PosicionX;
+                int y = PosicionY;
                 JugadorDerecha.Location = new Point(x, y);
             }
             else
