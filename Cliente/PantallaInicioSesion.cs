@@ -57,7 +57,7 @@ namespace Cliente
                 {
                     //Queremos iniciar sesión en nuestra cuenta
                     case 1:  
-                          RespuestaServidor = TrozosRespuesta[2];
+                        RespuestaServidor = TrozosRespuesta[2];
                         if (RespuestaServidor == "SI")
                         {
                             MessageBox.Show("Sesión iniciada correctamente, saludos " + TrozosRespuesta[1]);
@@ -179,7 +179,7 @@ namespace Cliente
                         RespuestaServidor = TrozosRespuesta[1];
                         if (RespuestaServidor == "SI")
                         {
-                            MessageBox.Show("Cuenta cerrada satisfactoriamente, gracias por utilizar nuestros servicio.");
+                            MessageBox.Show("Cuenta cerrada satisfactoriamente, gracias por utilizar nuestros servicios.");
                             if (threadlogueo.IsAlive == true)
                             {
                                 threadlogueo.Abort();
@@ -245,7 +245,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 50009);
+            IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -287,7 +287,7 @@ namespace Cliente
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 50008);
+            IPEndPoint ipep = new IPEndPoint(direc, 50009);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

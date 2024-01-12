@@ -250,7 +250,7 @@ int RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80])
 				strcat (ConsultaResultante, "', '");
 				strcat (ConsultaResultante, Contrasena);
 				strcat (ConsultaResultante, "', '");
-				strcat (ConsultaResultante, 1);
+				strcat (ConsultaResultante, "1");
 				strcat (ConsultaResultante, "')");
 				
 				ResultadoConsulta = mysql_query (conn, ConsultaResultante);
@@ -286,13 +286,12 @@ int RegistrarCuenta(MYSQL *conn, char Usuario[80], char Contrasena[80])
 int IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socket)
 {
 	//Comprobamos que el usuario ya esta registrado previamente
-	strcpy (ConsultaResultante,"SELECT Jugador.Nombre FROM Jugador WHERE Jugador.Nombre = '");
+	strcpy (ConsultaResultante,"SELECT * FROM Jugador WHERE Jugador.Nombre = '");
 	strcat (ConsultaResultante, Usuario);
 	strcat (ConsultaResultante,"' AND Jugador.Contrasena = '");
 	strcat (ConsultaResultante, Contrasena);
 	strcat (ConsultaResultante,"'");
 	int ResultadoConsulta = mysql_query (conn, ConsultaResultante);
-	
 	//Si vemos que no nos sale ningun usuario, informamos
 	if (ResultadoConsulta != 0)
 	{
@@ -317,17 +316,18 @@ int IniciarSesion(MYSQL *conn, char Usuario[80], char Contrasena[80], int Socket
 		//Si se encuentra un usuario con ese nombre
 		else if (row != NULL)
 		{
+			int EstadoCuenta = atoi(row[3]);
 			//Se comprueba si el usuario ha deshabilitado su cuenta previamente
-			if (row[3] == 0)
+			if (EstadoCuenta == 0)
 			{
 				return 2;
 			}
-			else if (row[3] == 1)
+			else if (EstadoCuenta == 1)
 			{
-				char UsuarioEncontrado;
+				char UsuarioEncontrado[80];
 				//Se hace un string del primer valor obtenido de la
 				//columna generada con la consulta
-				sprintf(UsuarioEncontrado, "%s", row[0]);
+				sprintf(UsuarioEncontrado, "%s", row[1]);
 			
 				//Se comprueba que el nombre obtenido es el del usuario
 				//introducido
@@ -550,6 +550,7 @@ void ObtenerFechaActual(char Respuesta[200])
 //Funcion que sirve para guardar una partida en la BBDD una vez finalizada
 void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[80], int Puntos2)
 {
+	pthread_mutex_lock(&mutex);
 	//Obtenemos el numero total de partidas guardadas en la base de datos
 	ResultadoConsulta = mysql_query (conn, ConsultaResultante);
 	int NumeroPartida = ResultadoConsulta + 1;
@@ -618,6 +619,8 @@ void GuardarPartida(MYSQL *conn, char Jugador1[80], int Puntos1, char Jugador2[8
 	//Guardamos el resultado del primero jugador en la base de datos
 	sprintf(ConsultaResultante, "INSERT INTO Participacion VALUES(%d,%d,%d)", Identificador, NumeroPartida, Puntos2);
 	mysql_query (conn, ConsultaResultante);
+	
+	pthread_mutex_unlock(&mutex);
 }
 	
 void *AtenderCliente (void *socket)
@@ -713,9 +716,7 @@ void *AtenderCliente (void *socket)
 			
 			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
 			
-			int = RespuestaInicioSesion;
-			
-			RespuestaInicioSesion = IniciarSesion(conn, Usuario, Contrasena, sock_conn);
+			int RespuestaInicioSesion = IniciarSesion(conn, Usuario, Contrasena, sock_conn);
 			
 			//Preparamos la respuesta en funcion de la respuesta de la funcion de inicio de sesion
 			switch (RespuestaInicioSesion)
@@ -938,6 +939,7 @@ void *AtenderCliente (void *socket)
 			write(SocketContrincante, Respuesta, strlen(Respuesta));
 		}
 		break;
+		
 		case 11: //Peticion para deshabilitar una cuenta
 		{
 			char Contrasena[80];
@@ -948,16 +950,24 @@ void *AtenderCliente (void *socket)
 			
 			printf ("Codigo: %d, Nombre: %s, Contrasena: %s\n", CodigoConsulta, Usuario, Contrasena);
 			
-			int = RespuestaInicioSesion;
+			int RespuestaInicioSesion;
 			
 			RespuestaInicioSesion = IniciarSesion(conn, Usuario, Contrasena, sock_conn);
 			
 			//Detectamos que el usuario que inicia sesion existe y esta habilitado
 			if (RespuestaInicioSesion == 0)
 			{
+				//Comprobamos si la cuenta se deshabilita de manera correcta
 				int RespuestaDeshabilitarCuenta;
 				RespuestaDeshabilitarCuenta = DeshabilitarCuenta(conn, Usuario);
-				sprintf(Respuesta, "11/SI");
+				if (RespuestaDeshabilitarCuenta == 0)
+				{
+					sprintf(Respuesta, "11/SI");
+				}
+				else
+				{
+					sprintf(Respuesta, "11/NO");
+				}
 			}
 			
 			//Devolver al cliente un mensaje de error por motivos de seguridad/privacidad
@@ -1006,7 +1016,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	//Establecemos el puerto de escucha
-	serv_adr.sin_port = htons(50008);
+	serv_adr.sin_port = htons(50009);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	

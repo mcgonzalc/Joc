@@ -4,15 +4,15 @@ USE M3BD;
 CREATE TABLE Jugador (
 	Identificador INTEGER PRIMARY KEY NOT NULL,
 	Nombre TEXT NOT NULL,
-	Contrasena TEXT NOT NULL
+	Contrasena TEXT NOT NULL,
 	Estado INTEGER NOT NULL
 	)ENGINE = InnoDB;
 
-INSERT INTO Jugador VALUES(1,'Juan','elloco123', 1);
-INSERT INTO Jugador VALUES(2,'Maria','amiquemecuentas', 1);
-INSERT INTO Jugador VALUES(3,'Pedro','contrasenasegura', 1);
-INSERT INTO Jugador VALUES(4,'Luis','xXeldiablillo67Xx', 1);
-INSERT INTO Jugador VALUES(5,'Julia','todocontrasena', 1);
+INSERT INTO Jugador VALUES(1,'Juan','elloco123',1);
+INSERT INTO Jugador VALUES(2,'Maria','amiquemecuentas',1);
+INSERT INTO Jugador VALUES(3,'Pedro','contrasenasegura',1);
+INSERT INTO Jugador VALUES(4,'Luis','xXeldiablillo67Xx',1);
+INSERT INTO Jugador VALUES(5,'Julia','todocontrasena',1);
 
 CREATE TABLE Partida (
 	Identificador INTEGER PRIMARY KEY NOT NULL,
