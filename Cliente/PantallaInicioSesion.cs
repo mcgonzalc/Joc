@@ -26,6 +26,7 @@ namespace Cliente
         public PantallaSesionUsuario()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
         }
 
         public void AtenderServidor()
@@ -91,6 +92,7 @@ namespace Cliente
                         else if (RespuestaServidor == "DESHABILITADO")
                         {
                             MessageBox.Show("Tu cuenta está deshabilitada, si quieres volver a usarla tendrás que habilitarla de nuevo");
+                            
                             this.BackColor = Color.Gray;
                             server.Shutdown(SocketShutdown.Both);
                             server.Close();
@@ -244,7 +246,7 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
             IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
@@ -286,8 +288,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 50009);
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
+            IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -393,8 +395,8 @@ namespace Cliente
         {
             //Creamos un IPEndPoint con la IP del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 50009);
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
+            IPEndPoint ipep = new IPEndPoint(direc, 50008);
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

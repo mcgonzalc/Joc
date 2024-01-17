@@ -22,6 +22,7 @@ namespace Cliente
             this.BackgroundImageLayout = ImageLayout.Stretch;
             this.JugadorLocal = JugadorLocal;
             this.server = server;
+            CheckForIllegalCrossThreadCalls = false;
         }
         
         private int velocidadSalto = 10;
@@ -57,12 +58,17 @@ namespace Cliente
                 {
                     x = 66;
                 }
-                if (x > 975 - 76)
+                if (x > 987 - 76)
                 {
-                    x = 975 - 76;
+                    x = 987 - 76;
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
                 JugadorIzquierda.Location = movimiento;
+
+                string mensaje = "10/" + Convert.ToString(JugadorIzquierda.Location.X) + "/" + Convert.ToString(JugadorIzquierda.Location.Y);
+                //Enviamos al servidor la petición deseada
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
             }
             if (JugadorLocal == false)
             {
@@ -86,6 +92,11 @@ namespace Cliente
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
                 JugadorDerecha.Location = movimiento;
+
+                string mensaje = "10/" + Convert.ToString(JugadorDerecha.Location.X) + "/" + Convert.ToString(JugadorDerecha.Location.Y);
+                //Enviamos al servidor la petición deseada
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
             }
         }
 
@@ -328,7 +339,7 @@ namespace Cliente
             {
 
                 JugadorIzquierda.Top -= velocidadSalto;
-                int x = JugadorDerecha.Location.X;
+                int x = JugadorIzquierda.Location.X;
                 if (JugadorIzquierda.Top < sueloY - alturaSalto)
                 {
                     velocidadSalto = -velocidadSalto;
@@ -341,6 +352,10 @@ namespace Cliente
                     velocidadSalto = Math.Abs(velocidadSalto);
                     JugadorIzquierda.Location = new Point(x, sueloY);
                 }
+                string mensaje = "10/" + Convert.ToString(JugadorIzquierda.Location.X) + "/" + Convert.ToString(JugadorIzquierda.Location.Y);
+                //Enviamos al servidor la petición deseada
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
             }
 
             if (JugadorLocal == false)
@@ -360,42 +375,25 @@ namespace Cliente
                     velocidadSalto = Math.Abs(velocidadSalto);
                     JugadorDerecha.Location = new Point(x, sueloY);
                 }
-            }
-        }
-
-        //Temporizador que determina cuando hay que pasar la posición del jugador controlado al rival
-        private void TimerPosicionParaRival_Tick(object sender, EventArgs e)
-        {
-            //Determinamos cuáles son las posiciones que hay que pasar en el mensaje
-            if (JugadorLocal == true)
-            {
                 string mensaje = "10/" + Convert.ToString(JugadorDerecha.Location.X) + "/" + Convert.ToString(JugadorDerecha.Location.Y);
                 //Enviamos al servidor la petición deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
-
-            else if (JugadorLocal == false)
-            {
-                string mensaje = "10/" + Convert.ToString(JugadorIzquierda.Location.X) + "/" + Convert.ToString(JugadorIzquierda.Location.Y);
-                //Enviamos al servidor la petición deseada
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
         }
+        
+
 
         public void ActualizarPosicionRival(int PosicionX, int PosicionY)
         {
+            
             if (JugadorLocal == true)
             {
-                int x = PosicionX;
-                int y = PosicionY;
-                JugadorDerecha.Location = new Point(x, y);
+                JugadorDerecha.Location = new Point(PosicionX, PosicionY);
             }
-            else
+            else if (JugadorLocal == false)
             {
-                PosicionX = JugadorIzquierda.Location.X;
-                PosicionY = JugadorIzquierda.Location.Y;
+                JugadorIzquierda.Location = new Point(PosicionX, PosicionY);
             }
         }
     }
