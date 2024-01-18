@@ -22,7 +22,6 @@ namespace Cliente
             this.BackgroundImageLayout = ImageLayout.Stretch;
             this.JugadorLocal = JugadorLocal;
             this.server = server;
-            CheckForIllegalCrossThreadCalls = false;
         }
         
         private int velocidadSalto = 10;
@@ -217,7 +216,6 @@ namespace Cliente
             
             // Actualiza la posición de la pelota
             pelota.Location = new Point(x - velocidadReboteX, y - velocidadReboteY);
-            
         }
 
         private void VerificarColisiones()
@@ -382,18 +380,22 @@ namespace Cliente
             }
         }
         
-
-
         public void ActualizarPosicionRival(int PosicionX, int PosicionY)
         {
             
             if (JugadorLocal == true)
             {
-                JugadorDerecha.Location = new Point(PosicionX, PosicionY);
+                JugadorDerecha.Invoke(new Action(() =>
+                {
+                    JugadorDerecha.Location = new Point(PosicionX, PosicionY);
+                }));
             }
             else if (JugadorLocal == false)
             {
-                JugadorIzquierda.Location = new Point(PosicionX, PosicionY);
+                JugadorIzquierda.Invoke(new Action(() =>
+                {
+                    JugadorIzquierda.Location = new Point(PosicionX, PosicionY);
+                }));
             }
         }
     }

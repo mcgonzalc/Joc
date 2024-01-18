@@ -26,7 +26,6 @@ namespace Cliente
         public PantallaSesionUsuario()
         {
             InitializeComponent();
-            CheckForIllegalCrossThreadCalls = false;
         }
 
         public void AtenderServidor()
