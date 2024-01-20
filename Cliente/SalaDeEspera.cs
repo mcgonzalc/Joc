@@ -24,6 +24,8 @@ namespace Cliente
         bool SaladeEsperaAbierta = false;
         List<Juego> ListaVentanasJuego = new List<Juego>();
         string Usuario, JugadorContrincante;
+        Thread threadjuego;
+        bool PartidaRealizada = false;
         public SalaDeEspera(Socket server, string Usuario)
         {
             InitializeComponent();
@@ -240,10 +242,14 @@ namespace Cliente
                 {
                     ListaVentanasJuego.Clear();
                 }
-                    Juego Juego = new Juego(false, server); // abrimos como jugador visitante
-                    ListaVentanasJuego.Add(Juego);
-                    Juego.ShowDialog();
-                
+                PartidaRealizada = true;
+                ThreadStart ts = delegate
+                {
+                    AbrirJuego(false);
+                };
+                threadjuego = new Thread(ts);
+                threadjuego.Start();
+
             }
         }
         
@@ -262,6 +268,13 @@ namespace Cliente
         {
             //Indicamos de que la ventana de la sala de espera está cerrada
             SaladeEsperaAbierta = false;
+            if (PartidaRealizada == true)
+            {
+                if (threadjuego.IsAlive == true)
+                {
+                    threadjuego.Abort();
+                }
+            }
         }
 
         //Qué sucede cuando pulsamos el botón para enviar un mensaje por el chat
@@ -334,10 +347,21 @@ namespace Cliente
             {
                 ListaVentanasJuego.Clear();
             }
-                Juego Juego = new Juego(true, server); // abrimos como jugador local
-                ListaVentanasJuego.Add(Juego);
-                Juego.ShowDialog();
-            
+            PartidaRealizada = true;
+            ThreadStart ts = delegate
+            {
+                AbrirJuego(true);
+            };
+            threadjuego = new Thread(ts);
+            threadjuego.Start();
+
+        }
+
+        void AbrirJuego(bool JugadorLocal)
+        {
+            Juego Juego = new Juego(JugadorLocal, server); // abrimos como jugador local
+            ListaVentanasJuego.Add(Juego);
+            Juego.ShowDialog();
         }
 
         private void BotonInvitacion_Click(object sender, EventArgs e)

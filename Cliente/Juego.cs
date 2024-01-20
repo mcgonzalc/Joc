@@ -69,6 +69,7 @@ namespace Cliente
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
+
             if (JugadorLocal == false)
             {
                 int x = JugadorDerecha.Location.X;
@@ -286,7 +287,6 @@ namespace Cliente
             if (TiempoPartida == 120)
             {
                 TimerPartida.Stop();
-                TimerSalto.Stop();
 
                 //Determinamos el mensaje postpartido que ha de salir en función del resultado
                 if ((MarcadorLocal > MarcadorVisitante) && (JugadorLocal == true))
@@ -350,6 +350,7 @@ namespace Cliente
                     velocidadSalto = Math.Abs(velocidadSalto);
                     JugadorIzquierda.Location = new Point(x, sueloY);
                 }
+
                 string mensaje = "10/" + Convert.ToString(JugadorIzquierda.Location.X) + "/" + Convert.ToString(JugadorIzquierda.Location.Y);
                 //Enviamos al servidor la petición deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -373,6 +374,7 @@ namespace Cliente
                     velocidadSalto = Math.Abs(velocidadSalto);
                     JugadorDerecha.Location = new Point(x, sueloY);
                 }
+
                 string mensaje = "10/" + Convert.ToString(JugadorDerecha.Location.X) + "/" + Convert.ToString(JugadorDerecha.Location.Y);
                 //Enviamos al servidor la petición deseada
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);

@@ -142,7 +142,6 @@ namespace Cliente
             // 
             // TimerPartida
             // 
-            this.TimerPartida.Enabled = true;
             this.TimerPartida.Interval = 1000;
             this.TimerPartida.Tick += new System.EventHandler(this.TimerPartida_Tick);
             // 
