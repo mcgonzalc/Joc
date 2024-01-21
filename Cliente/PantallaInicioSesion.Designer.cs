@@ -37,6 +37,7 @@
             this.BotonRegistroCuenta = new System.Windows.Forms.Button();
             this.OpcionCuentaNueva = new System.Windows.Forms.RadioButton();
             this.BotonCierreSesion = new System.Windows.Forms.Button();
+            this.BotonDeshabilitarCuenta = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Usuario
@@ -132,7 +133,7 @@
             // 
             this.BotonCierreSesion.Enabled = false;
             this.BotonCierreSesion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BotonCierreSesion.Location = new System.Drawing.Point(201, 330);
+            this.BotonCierreSesion.Location = new System.Drawing.Point(297, 330);
             this.BotonCierreSesion.Name = "BotonCierreSesion";
             this.BotonCierreSesion.Size = new System.Drawing.Size(179, 63);
             this.BotonCierreSesion.TabIndex = 8;
@@ -140,11 +141,24 @@
             this.BotonCierreSesion.UseVisualStyleBackColor = true;
             this.BotonCierreSesion.Click += new System.EventHandler(this.BotonCierreSesion_Click);
             // 
+            // BotonDeshabilitarCuenta
+            // 
+            this.BotonDeshabilitarCuenta.Enabled = false;
+            this.BotonDeshabilitarCuenta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BotonDeshabilitarCuenta.Location = new System.Drawing.Point(102, 330);
+            this.BotonDeshabilitarCuenta.Name = "BotonDeshabilitarCuenta";
+            this.BotonDeshabilitarCuenta.Size = new System.Drawing.Size(179, 63);
+            this.BotonDeshabilitarCuenta.TabIndex = 9;
+            this.BotonDeshabilitarCuenta.Text = "Deshabilitar la cuenta";
+            this.BotonDeshabilitarCuenta.UseVisualStyleBackColor = true;
+            this.BotonDeshabilitarCuenta.Click += new System.EventHandler(this.BotonDeshabilitarCuenta_Click);
+            // 
             // PantallaSesionUsuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(567, 410);
+            this.Controls.Add(this.BotonDeshabilitarCuenta);
             this.Controls.Add(this.BotonCierreSesion);
             this.Controls.Add(this.OpcionCuentaNueva);
             this.Controls.Add(this.BotonRegistroCuenta);
@@ -173,6 +187,7 @@
         private System.Windows.Forms.Button BotonRegistroCuenta;
         private System.Windows.Forms.RadioButton OpcionCuentaNueva;
         private System.Windows.Forms.Button BotonCierreSesion;
+        private System.Windows.Forms.Button BotonDeshabilitarCuenta;
     }
 }
 
