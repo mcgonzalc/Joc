@@ -31,3 +31,5 @@
 ----------------
 - Versión 6 generada por Pedro
 - Versión 6 verificada por Marc
+- Versión 6 comunicada por Daniel
+- URL: https://youtu.be/GPD1T52kX6c
