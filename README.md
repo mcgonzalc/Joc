@@ -1,4 +1,4 @@
-# Juego
+# Head Soccer
 - Versión 1 generada por Marc
 - Versión 1 verificada por Pedro
 - Versión 1 comunicada por Daniel
