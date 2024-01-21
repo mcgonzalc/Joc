@@ -27,3 +27,6 @@
 - Versión 5 verificada por Daniel
 - Versión 5 comunicada por Pedro
 - URL: https://youtu.be/4YeQQzgSxFs
+
+----------------
+-Versión 6 generada por Pedro
