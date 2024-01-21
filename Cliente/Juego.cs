@@ -102,6 +102,7 @@ namespace Cliente
                 server.Send(msg);
             }
         }
+
         // Funcion que al pulsar la tecla espacio activa el timer del salto
         private void Juego_KeyDown(object sender, KeyEventArgs e) 
         {
@@ -119,6 +120,7 @@ namespace Cliente
             ColisionConJugadorDerecha(pelota, JugadorDerecha);
             ColisionConJugadorIzquierda(pelota, JugadorIzquierda);
         }
+
         // Checkea si hay colision entre la porteria y la pelota
         private bool GolPorteriaIzquierda( PictureBox pb1, PictureBox pb2) 
         {
@@ -133,6 +135,7 @@ namespace Cliente
             else
                 return false;
         }
+
         // Checkea si hay colision entre la porteria y la pelota
         private bool GolPorteriaDerecha(PictureBox pb1, PictureBox pb2) 
         {
@@ -147,7 +150,8 @@ namespace Cliente
             else
                 return false;
         }
-        // checkea si hay colison con el JugadorDerecha y la pelota 
+        
+        // checkea si hay colison con el JugadorDerecha y la pelota
         private bool ColisionConJugadorDerecha(PictureBox pb1, PictureBox pb2)  
         {
             TimerPelota.Enabled = true;
@@ -159,8 +163,8 @@ namespace Cliente
             return hayColision;
 
         }
-        // checkea si hay colison con el JugadorIzquierda y la pelota 
-
+        
+        // checkea si hay colison con el JugadorIzquierda y la pelota
         private bool ColisionConJugadorIzquierda(PictureBox pb1, PictureBox pb2) // checkea si hay colison con el JugadorIzquierda y la pelota 
         {
             TimerPelota.Enabled = true;
@@ -172,7 +176,8 @@ namespace Cliente
             return hayColision;
 
         }
-        // Timer que realiza todo el movimiento de la pelota
+        
+        //Timer que realiza todo el movimiento de la pelota
         private void TimerPelota_Tick(object sender, EventArgs e)
         {
 
@@ -253,6 +258,7 @@ namespace Cliente
             //Verifica colisión con los jugadores
            
         }
+        
         // Aplica gravedad a la pelota
         private void AplicarGravedad()
         {
@@ -263,7 +269,8 @@ namespace Cliente
         {
             velocidadReboteY += gravedad;
         }
-        // Determinamos que hacer cuando cuando pelota rebota con los margenes
+        
+        // Determinamos que hacer cuando cuando pelota rebota con los márgenes
         private void RealizarRebote(bool enEjeY, bool enEjeX)
         {
             if (enEjeY)
@@ -276,12 +283,14 @@ namespace Cliente
                 velocidadReboteX = -velocidadReboteX; // Invierte la dirección del rebote en el eje X
             }
         }
-        // Margenes de la posicion de la pelota
+        
+        //Márgenes de la posicion de la pelota
         private void AjustarPosicionMaxY()
         {
             pelota.Location = new Point(pelota.Location.X, 250);
         }
-        // Margenes de la posicion de la pelota
+        
+        //Márgenes de la posicion de la pelota
         private void AjustarPosicionMinY()
         {
             pelota.Location = new Point(pelota.Location.X, 70);

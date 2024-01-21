@@ -219,6 +219,7 @@ namespace Cliente
                     BotonInvitacion.Enabled = true;
                 }));
             }
+            //Qué sucede cuando el contrincante ha dado el botón de empezar la partida
             if (Gestion == "EMPEZAR")
             {
                 //Deshabilitamos el chat y la posibilidad de enviar más mensajes puesto que se empieza la partida
@@ -268,6 +269,8 @@ namespace Cliente
         {
             //Indicamos de que la ventana de la sala de espera está cerrada
             SaladeEsperaAbierta = false;
+
+            //Comprobamos si se ha empezado alguna partida para así cerrar su thread
             if (PartidaRealizada == true)
             {
                 if (threadjuego.IsAlive == true)
@@ -317,6 +320,7 @@ namespace Cliente
             }));
         }
 
+        //Qué sucede cuando un jugador le da al botón de inicio de partida
         private void BotonInicioPartida_Click(object sender, EventArgs e)
         {
             MensajeChatAEnviar.Text = "";
@@ -357,13 +361,16 @@ namespace Cliente
 
         }
 
-        void AbrirJuego(bool JugadorLocal)
+        //Función para abrir una instancia del formulario del juego
+        private void AbrirJuego(bool JugadorLocal)
         {
             Juego Juego = new Juego(JugadorLocal, server); // abrimos como jugador local
             ListaVentanasJuego.Add(Juego);
+            Juego.FormClosed += Juego_FormClosed;
             Juego.ShowDialog();
         }
 
+        //Cómo funciona el protocolo de invitación en primera instancia
         private void BotonInvitacion_Click(object sender, EventArgs e)
         {
             //Comprobamos si ya hay algún jugador seleccionado de la tabla de conectados y no es el nombre del usuario logueado en este cliente
@@ -388,9 +395,19 @@ namespace Cliente
             }
         }
 
+        //Función que pasa la posición del jugador rival a la pantalla del jugador
         public void ActualizarPosicionRival(int PosicionX, int PosicionY)
         {
             ListaVentanasJuego[0].ActualizarPosicionRival(PosicionX, PosicionY);
+        }
+
+        private void Juego_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //Habilitamos el botón de invitación puesto que la partida ha terminado
+            BotonInvitacion.Invoke(new Action(() =>
+            {
+                BotonInvitacion.Enabled = true;
+            }));
         }
     }
 }
