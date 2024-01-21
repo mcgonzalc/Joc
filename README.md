@@ -29,4 +29,5 @@
 - URL: https://youtu.be/4YeQQzgSxFs
 
 ----------------
--Versión 6 generada por Pedro
+- Versión 6 generada por Pedro
+- Versión 6 verificada por Marc
