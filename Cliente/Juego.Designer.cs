@@ -64,7 +64,7 @@ namespace Cliente
             // JugadorIzquierda
             // 
             this.JugadorIzquierda.BackColor = System.Drawing.Color.Transparent;
-            this.JugadorIzquierda.Image = global::Cliente.Properties.Resources.jugador_2;
+            this.JugadorIzquierda.Image = global::Cliente.Properties.Resources.Jugador_2_sin_fondo;
             this.JugadorIzquierda.Location = new System.Drawing.Point(150, 369);
             this.JugadorIzquierda.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JugadorIzquierda.Name = "JugadorIzquierda";

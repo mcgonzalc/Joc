@@ -58,9 +58,9 @@ namespace Cliente
                 {
                     x = 66;
                 }
-                if (x > 987 - 76)
+                if (x > 902)
                 {
-                    x = 987 - 76;
+                    x = 902;
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
                 JugadorIzquierda.Location = movimiento;
@@ -88,9 +88,9 @@ namespace Cliente
                 {
                     x = 66;
                 }
-                if (x > 975 - 76)
+                if (x > 902)
                 {
-                    x = 975 - 76;
+                    x = 902;
                 }
                 Point movimiento = new Point(x, y); // Creamos el nuevo punto a donde movimos el jugador
                 JugadorDerecha.Location = movimiento;
